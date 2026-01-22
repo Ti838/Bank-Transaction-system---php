@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction History - Trust Mora Bank{% endblock %}
+
+{% block body %}
+<section class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <a href="/dashboard" class="text-primary-400 hover:text-primary-300 inline-flex items-center mb-4">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </a>
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 class="text-4xl font-bold font-poppins gradient-text mb-2">Transaction History</h1>
+                    <p class="text-gray-400">View and download your transactions</p>
+                </div>
+                <a href="/transactions/export/csv"
+                    class="inline-flex items-center px-6 py-3 bg-success-600 hover:bg-success-700 text-white rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-success-500/20">
+                    <i class="fas fa-file-csv mr-2 text-xl"></i>Download Statement
+                </a>
+            </div>
+        </div>
+
+        <!-- Account Info -->
+        <div class="glass-light p-6 rounded-xl border border-primary-500/30 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Account Number</p>
+                    <p class="text-xl font-bold text-white">{{ account.account_number }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Current Balance</p>
+                    <p class="text-2xl font-bold gradient-text dynamic-money" data-amount="{{ account.balance }}">৳{{
+                        "%.2f"|format(account.balance|float) }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Total Transactions</p>
+                    <p class="text-2xl font-bold text-white">{{ transactions|length }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="glass-light p-6 rounded-xl border border-primary-500/30">
+            {% if transactions %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-4 px-4 text-gray-400 font-semibold">Date & Time</th>
+                            <th class="text-left py-4 px-4 text-gray-400 font-semibold">Type</th>
+                            <th class="text-left py-4 px-4 text-gray-400 font-semibold">Description</th>
+                            <th
+                                class="text-right py-4 px-6 text-gray-400 font-semibold text-sm uppercase tracking-wider">
+                                Amount</th>
+                            <th
+                                class="text-center py-4 px-6 text-gray-400 font-semibold text-sm uppercase tracking-wider">
+                                Status</th>
+                            <th
+                                class="text-center py-4 px-6 text-gray-400 font-semibold text-sm uppercase tracking-wider">
+                                Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trans in transactions %}
+                        <tr class="border-b border-gray-800 hover:bg-slate-900/50 transition-colors">
+                            <td class="py-4 px-4">
+                                <div>
+                                    <p class="text-white font-medium">{{ trans.created_at.strftime('%b %d, %Y') }}</p>
+                                    <p class="text-gray-400 text-sm">{{ trans.created_at.strftime('%I:%M %p') }}</p>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center
+                                        {% if trans.transaction_type == 'Deposit' %}bg-success-500/20
+                                        {% elif trans.transaction_type == 'Withdrawal' %}bg-red-500/20
+                                        {% else %}bg-primary-500/20{% endif %}">
+                                        <i class="fas text-sm
+                                            {% if trans.transaction_type == 'Deposit' %}fa-arrow-down text-success-400
+                                            {% elif trans.transaction_type == 'Withdrawal' %}fa-arrow-up text-red-400
+                                            {% else %}fa-exchange-alt text-primary-400{% endif %}"></i>
+                                    </div>
+                                    <span class="text-white font-medium">{{ trans.transaction_type }}</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-gray-300">
+                                {{ trans.description if trans.description else '-' }}
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="flex flex-col items-end">
+                                    <span class="text-lg font-bold
+                                        {% if trans.transaction_type == 'Deposit' or (trans.transaction_type == 'Transfer' and trans.to_account_id == account.id) %}text-success-400
+                                        {% else %}text-red-400{% endif %}">
+                                        {% if trans.transaction_type == 'Deposit' or (trans.transaction_type ==
+                                        'Transfer' and trans.to_account_id == account.id) %}
+                                        <span class="dynamic-money" data-amount="{{ trans.amount }}">+৳{{
+                                            "%.2f"|format(trans.amount|float) }}</span>
+                                        {% else %}
+                                        <span class="dynamic-money" data-amount="-{{ trans.amount }}">-৳{{
+                                            "%.2f"|format(trans.amount|float) }}</span>
+                                        {% endif %}
+                                    </span>
+                                    {% if trans.from_account_id == account.id and trans.fee and trans.fee > 0 %}
+                                    <span class="text-[10px] text-gray-500">Bank Fee: ৳{{ "%.2f"|format(trans.fee|float)
+                                        }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                    {% if trans.status == 'Success' %}bg-success-500/20 text-success-400
+                                    {% elif trans.status == 'Pending' %}bg-gold-500/20 text-gold-400
+                                    {% else %}bg-red-500/20 text-red-400{% endif %}">
+                                    {{ trans.status }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <a href="/transaction/{{ trans.id }}/receipt" target="_blank"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-700 hover:bg-primary-500 text-gray-400 hover:text-white transition-all"
+                                    title="Print Receipt">
+                                    <i class="fas fa-print text-xs"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-16">
+                <i class="fas fa-receipt text-8xl text-gray-600 mb-6"></i>
+                <h3 class="text-2xl font-bold text-white mb-2">No Transactions Yet</h3>
+                <p class="text-gray-400 mb-8">Start using your account to see your transaction history</p>
+                <a href="/dashboard"
+                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-500 to-success-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transform hover:scale-105 transition-all">
+                    <i class="fas fa-arrow-left mr-2"></i>Go to Dashboard
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

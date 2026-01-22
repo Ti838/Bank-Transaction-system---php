@@ -1,0 +1,19 @@
+# Ignore PHP version for this repository
+php_version/
+index.php
+
+# Ignore OS files
+Thumbs.db
+.DS_Store
+
+# Ignore Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.python-version

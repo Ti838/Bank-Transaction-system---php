@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Trust Mora Bank{% endblock %}
+
+{% block body %}
+<!-- Data block for JS -->
+<div id="dashboard-data" data-transactions='{{ chart_data|tojson|safe }}'
+    data-balance='{{ account.balance|tojson|safe }}' class="hidden"></div>
+
+<section class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Welcome Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-poppins gradient-text mb-2">Welcome, {{ current_user.full_name }}!</h1>
+            <p class="text-gray-400">Manage your account and transactions easily</p>
+        </div>
+
+        <!-- Account Balance Card -->
+        <div class="glass-light p-8 rounded-2xl border border-primary-500/30 mb-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Account Number</p>
+                        <p class="text-2xl font-bold text-white">{{ account.account_number }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-gray-400 text-sm mb-1">Account Type</p>
+                        <span class="px-4 py-1 bg-success-500/20 text-success-400 rounded-full text-sm font-semibold">
+                            {{ account.account_type }}
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <p class="text-gray-400 text-sm mb-2">Available Balance</p>
+                    <p class="text-3xl font-bold text-white dynamic-money" data-amount="{{ account.balance }}">৳{{
+                        "%.2f"|format(account.balance) }}</p>
+                </div>
+                <div class="mt-6">
+                    <span class="px-3 py-1 
+                        {% if account.status == 'Active' %}bg-success-500/20 text-success-400
+                        {% elif account.status == 'Suspended' %}bg-red-500/20 text-red-400
+                        {% else %}bg-gray-500/20 text-gray-400{% endif %} 
+                        rounded-full text-xs font-semibold">
+                        <i class="fas fa-circle text-xs mr-1"></i>{{ account.status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h2 class="text-2xl font-bold text-white mb-6">Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <a href="/deposit"
+                class="glass-light p-6 rounded-xl border border-success-500/30 hover:border-success-500 hover:shadow-xl hover:shadow-success-500/30 transform hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-success-500 to-success-700 rounded-full flex items-center justify-center group-hover:animate-pulse">
+                        <i class="fas fa-university text-2xl text-white"></i>
+                    </div>
+                    <i class="fas fa-info-circle text-success-400 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Bank Deposit</h3>
+                <p class="text-gray-400 text-sm">Contact bank to credit account</p>
+            </a>
+
+            <a href="/withdraw"
+                class="glass-light p-6 rounded-xl border border-red-500/30 hover:border-red-500 hover:shadow-xl hover:shadow-red-500/30 transform hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center group-hover:animate-pulse">
+                        <i class="fas fa-minus-circle text-2xl text-white"></i>
+                    </div>
+                    <i class="fas fa-arrow-right text-red-400 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Withdraw Money</h3>
+                <p class="text-gray-400 text-sm">Withdraw from your account</p>
+            </a>
+
+            <a href="/transfer"
+                class="glass-light p-6 rounded-xl border border-primary-500/30 hover:border-primary-500 hover:shadow-xl hover:shadow-primary-500/30 transform hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center group-hover:animate-pulse">
+                        <i class="fas fa-exchange-alt text-2xl text-white"></i>
+                    </div>
+                    <i class="fas fa-arrow-right text-primary-400 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Transfer Money</h3>
+                <p class="text-gray-400 text-sm">Send to another account</p>
+            </a>
+        </div>
+
+        <!-- Visual Analytics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Income vs Expense Chart -->
+            <div class="glass-light p-6 rounded-xl border border-primary-500/30">
+                <h3 class="text-xl font-bold text-white mb-4">Transaction Overview</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="transactionDoughnut"></canvas>
+                </div>
+            </div>
+
+            <!-- Activity Chart -->
+            <div class="glass-light p-6 rounded-xl border border-primary-500/30">
+                <h3 class="text-xl font-bold text-white mb-4">Recent Activity</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="activityLine"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <!-- Recent Transactions -->
+            <div class="xl:col-span-2">
+                <div class="glass-light p-6 rounded-xl border border-primary-500/30 h-full">
+                    <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                        <h2 class="text-2xl font-bold text-white">Recent Transactions</h2>
+                        <a href="/transactions"
+                            class="text-primary-400 hover:text-primary-300 text-sm font-semibold whitespace-nowrap">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+
+                    {% if recent_transactions %}
+                    <div class="space-y-3">
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-700/50">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"
+                                            class="py-3.5 px-4 text-left text-sm font-semibold text-gray-400">Date</th>
+                                        <th scope="col"
+                                            class="py-3.5 px-4 text-left text-sm font-semibold text-gray-400">Type</th>
+                                        <th scope="col"
+                                            class="py-3.5 px-4 text-left text-sm font-semibold text-gray-400">Amount
+                                        </th>
+                                        <th scope="col"
+                                            class="py-3.5 px-4 text-left text-sm font-semibold text-gray-400">Status
+                                        </th>
+                                        <th scope="col" class="relative py-3.5 px-4">
+                                            <span class="sr-only">Receipt</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-700/50">
+                                    {% for transaction in recent_transactions %}
+                                    <tr class="border-b border-slate-700/50 hover:bg-slate-700/20 transition-colors">
+                                        <td class="py-4 px-4 text-gray-300">
+                                            {{ transaction.created_at.strftime('%d %b, %I:%M %p') }}
+                                        </td>
+                                        <td class="py-4 px-4 font-medium text-white flex items-center">
+                                            {% if transaction.transaction_type == 'Deposit' %}
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-success-500/20 flex items-center justify-center mr-3 text-success-400">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div>
+                                            {% elif transaction.transaction_type == 'Withdrawal' %}
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center mr-3 text-red-400">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </div>
+                                            {% else %}
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center mr-3 text-primary-400">
+                                                <i class="fas fa-exchange-alt"></i>
+                                            </div>
+                                            {% endif %}
+                                            {{ transaction.transaction_type }}
+                                        </td>
+                                        <td
+                                            class="py-4 px-4 font-medium {% if transaction.transaction_type == 'Deposit' %}text-success-400 {% elif transaction.transaction_type == 'Withdrawal' %}text-red-400 {% else %}text-white{% endif %}">
+                                            {% if transaction.transaction_type == 'Withdrawal' or
+                                            (transaction.transaction_type == 'Transfer' and transaction.from_account_id
+                                            == account.id) %}
+                                            <span class="dynamic-money" data-amount="-{{ transaction.amount }}">-৳{{
+                                                "%.2f"|format(transaction.amount) }}</span>
+                                            {% else %}
+                                            <span class="dynamic-money" data-amount="{{ transaction.amount }}">+৳{{
+                                                "%.2f"|format(transaction.amount) }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            {% if transaction.status == 'Success' %}
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-500/10 text-success-400 border border-success-500/20">
+                                                <span class="w-1.5 h-1.5 bg-success-400 rounded-full mr-1.5"></span>
+                                                Success
+                                            </span>
+                                            {% else %}
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20">
+                                                Pending
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="py-4 px-4 text-right">
+                                            <a href="{{ url_for('transaction_receipt', transaction_id=transaction.id) }}"
+                                                class="text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium">
+                                                Receipt <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12">
+                            <i class="fas fa-receipt text-6xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">No transactions yet</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="glass-light p-6 rounded-xl border border-primary-500/30 h-full">
+                    <h2 class="text-2xl font-bold text-white mb-6">Notifications</h2>
+                    {% if notifications %}
+                    <div class="space-y-3">
+                        {% for notif in notifications %}
+                        <div class="p-3 bg-slate-900/50 rounded-lg border-l-4 
+                        {% if notif.notification_type == 'Success' %}border-success-500
+                        {% elif notif.notification_type == 'Error' %}border-red-500
+                        {% else %}border-primary-500{% endif %}">
+                            <p class="text-sm text-gray-300">{{ notif.message }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ notif.created_at.strftime('%b %d, %I:%M %p') }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-12">
+                        <i class="fas fa-bell-slash text-6xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400">No notifications</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dataEl = document.getElementById('dashboard-data');
+        const transactionsData = JSON.parse(dataEl.dataset.transactions);
+        const currentBalance = JSON.parse(dataEl.dataset.balance);
+
+        // Process Data for Doughnut Chart
+        let depositTotal = 0;
+        let withdrawTotal = 0;
+        let transferTotal = 0;
+
+        transactionsData.forEach(t => {
+            if (t.type === 'Deposit') depositTotal += t.amount;
+            else if (t.type === 'Withdrawal') withdrawTotal += t.amount;
+            else transferTotal += t.amount;
+        });
+
+        // 1. Transaction Overview (Doughnut)
+        const ctxDoughnut = document.getElementById('transactionDoughnut').getContext('2d');
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Deposits', 'Withdrawals', 'Transfers'],
+                datasets: [{
+                    data: [depositTotal, withdrawTotal, transferTotal],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)', // Success Green
+                        'rgba(239, 68, 68, 0.8)',  // Red
+                        'rgba(59, 130, 246, 0.8)'  // Primary Blue
+                    ],
+                    borderColor: [
+                        '#10b981',
+                        '#ef4444',
+                        '#3b82f6'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#9ca3af' }
+                    }
+                }
+            }
+        });
+
+        // 2. Activity Line Chart (Dummy data for visualization if not enough real data)
+        const ctxLine = document.getElementById('activityLine').getContext('2d');
+
+        new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Balance History',
+                    data: [1200, 1900, 1500, 2200, 1800, 2500, currentBalance],
+                    borderColor: '#f59e0b', // Gold
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#9ca3af' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

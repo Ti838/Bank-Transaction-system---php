@@ -1,0 +1,239 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Staff Dashboard - Trust Mora Bank{% endblock %}
+
+{% block body %}
+<section class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-poppins gradient-text mb-2">Staff Dashboard</h1>
+            <p class="text-gray-400">Assist customers with banking operations</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div data-tilt class="glass-light p-6 rounded-xl border border-success-500/30">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400">Deposits Today</h3>
+                    <i class="fas fa-arrow-down text-success-400 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-white">{{ count_deposits|default(0) }}</p>
+            </div>
+
+            <div data-tilt class="glass-light p-6 rounded-xl border border-red-500/30">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400">Withdrawals Today</h3>
+                    <i class="fas fa-arrow-up text-red-400 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-white">{{ count_withdrawals|default(0) }}</p>
+            </div>
+
+            <div data-tilt class="glass-light p-6 rounded-xl border border-primary-500/30">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400">Transfers Today</h3>
+                    <i class="fas fa-exchange-alt text-primary-400 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-white">{{ count_transfers|default(0) }}</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Analytics -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Quick Assist Action -->
+            <a href="/staff/assist"
+                class="glass-light p-6 rounded-xl border border-primary-500/30 hover:border-primary-500 hover:shadow-xl hover:shadow-primary-500/30 transform hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-center items-center text-center">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center mb-4 group-hover:animate-pulse">
+                    <i class="fas fa-hands-helping text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Assist Customer</h3>
+                <p class="text-gray-400 text-sm">Process deposits & withdrawals</p>
+            </a>
+
+            <!-- Quick Balance Check (New) -->
+            <div class="glass-light p-6 rounded-xl border border-gold-500/30 flex flex-col justify-center">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                    <i class="fas fa-search-dollar text-gold-400 mr-2"></i> Check Balance
+                </h3>
+                <form action="/staff/check_balance" method="POST" class="space-y-3">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="text" name="account_number" placeholder="Account Number" required
+                        class="w-full px-3 py-2 bg-slate-900/50 border border-primary-500/30 rounded-lg text-white placeholder-gray-500 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+                    <button type="submit"
+                        class="w-full py-2 bg-gold-600/20 hover:bg-gold-600 text-gold-400 hover:text-white rounded-lg text-sm font-bold transition-all border border-gold-500/50">Check
+                        Now</button>
+                </form>
+            </div>
+
+            <!-- Analytics Chart -->
+            <div class="lg:col-span-2 glass-light p-6 rounded-xl border border-primary-500/30">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-xl font-bold text-white">Transaction Distribution</h3>
+                    <a href="/staff/reports"
+                        class="px-4 py-2 bg-primary-600/30 hover:bg-primary-600 text-primary-300 hover:text-white rounded-lg text-sm font-bold transition-all">
+                        <i class="fas fa-file-alt mr-2"></i>View Daily Report
+                    </a>
+                </div>
+                <div class="relative h-48">
+                    <canvas id="staffTransactionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="glass-light p-6 rounded-xl border border-primary-500/30 mb-8">
+            <h2 class="text-2xl font-bold text-white mb-6">Recent Transactions</h2>
+            {% if recent_transactions %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4 text-gray-400 font-semibold">Time</th>
+                            <th class="text-left py-3 px-4 text-gray-400 font-semibold">Customer</th>
+                            <th class="text-left py-3 px-4 text-gray-400 font-semibold">Type</th>
+                            <th class="text-right py-3 px-4 text-gray-400 font-semibold">Amount</th>
+                            <th class="text-center py-3 px-4 text-gray-400 font-semibold">Status</th>
+                            <th class="text-center py-3 px-4 text-gray-400 font-semibold">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trans in recent_transactions %}
+                        <tr class="border-b border-gray-800 hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 text-gray-300">{{ trans.created_at.strftime('%I:%M %p') }}</td>
+                            <td class="py-3 px-4">
+                                <div class="flex flex-col">
+                                    {% if trans.from_account %}
+                                    <span class="text-white text-sm font-semibold">{{ trans.from_account.owner.full_name
+                                        }}</span>
+                                    <span class="text-gray-500 text-xs">{{ trans.from_account.account_number }}</span>
+                                    {% elif trans.to_account %}
+                                    <span class="text-white text-sm font-semibold">{{ trans.to_account.owner.full_name
+                                        }}</span>
+                                    <span class="text-gray-500 text-xs">{{ trans.to_account.account_number }}</span>
+                                    {% else %}
+                                    <span class="text-gray-400 text-xs">System</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="py-3 px-4">
+                                <span
+                                    class="px-3 py-1 rounded-full text-xs font-semibold {% if trans.transaction_type == 'Deposit' %}bg-success-500/20 text-success-400{% elif trans.transaction_type == 'Withdrawal' %}bg-red-500/20 text-red-400{% else %}bg-primary-500/20 text-primary-400{% endif %}">
+                                    {{ trans.transaction_type }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 text-right text-white font-semibold dynamic-money"
+                                data-amount="{{ trans.amount }}">৳{{ "%.2f"|format(trans.amount|float) }}</td>
+                            <td class="py-3 px-4 text-center">
+                                <span
+                                    class="px-3 py-1 rounded-full text-xs font-semibold {% if trans.status == 'Success' %}bg-success-500/20 text-success-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                                    {{ trans.status }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="/transaction/{{ trans.id }}/receipt" target="_blank"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-700 hover:bg-primary-500 text-gray-400 hover:text-white transition-all"
+                                    title="Print Receipt">
+                                    <i class="fas fa-print text-xs"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-400 text-center py-8">No transactions found for today.</p>
+            {% endif %}
+        </div>
+
+        <!-- Information -->
+        <div class="glass-light p-8 rounded-xl border border-primary-500/30">
+            <h2 class="text-2xl font-bold text-white mb-6">Staff Guidelines</h2>
+            <div class="space-y-4">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-primary-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check text-primary-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Verify Customer Identity</h3>
+                        <p class="text-gray-400 text-sm">Always verify customer identity before processing transactions
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-success-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-shield-alt text-success-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Secure Transactions</h3>
+                        <p class="text-gray-400 text-sm">Ensure all transactions are processed securely and accurately
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-gold-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-friends text-gold-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Customer Service</h3>
+                        <p class="text-gray-400 text-sm">Provide excellent service and assistance to all customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Data injected from backend with defensive Number casting
+        const deposits = Number("{{ count_deposits|default(0) }}");
+        const withdrawals = Number("{{ count_withdrawals|default(0) }}");
+        const transfers = Number("{{ count_transfers|default(0) }}");
+
+        const ctx = document.getElementById('staffTransactionChart');
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Deposits', 'Withdrawals', 'Transfers'],
+                    datasets: [{
+                        label: 'Transaction Count',
+                        data: [deposits, withdrawals, transfers],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.6)',
+                            'rgba(239, 68, 68, 0.6)',
+                            'rgba(59, 130, 246, 0.6)'
+                        ],
+                        borderColor: [
+                            '#10b981',
+                            '#ef4444',
+                            '#3b82f6'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#9ca3af', stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

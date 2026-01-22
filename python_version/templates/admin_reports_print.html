@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Report - Trust Mora Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-900 p-8">
+
+    <!-- Print Controls -->
+    <div class="no-print mb-8 flex justify-end">
+        <button onclick="window.print()"
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700">
+            Print / Save as PDF
+        </button>
+    </div>
+
+    <!-- Report Header -->
+    <div class="border-b-2 border-gray-800 pb-6 mb-8">
+        <div class="flex justify-between items-end">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900">Transaction Report</h1>
+                <p class="text-gray-600 mt-2">Generated on {{ today.strftime('%B %d, %Y at %I:%M %p') }}</p>
+            </div>
+            <div class="text-right">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Trust Mora Bank</h1>
+                    <p class="text-sm text-gray-500">Official Transaction Report</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Box -->
+        <div class="grid grid-cols-4 gap-4 mb-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
+            <div>
+                <p class="text-[10px] text-gray-500 uppercase font-bold">Total Transactions</p>
+                <p class="text-xl font-bold">{{ transactions|length }}</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-500 uppercase font-bold">Total Deposits</p>
+                <p class="text-xl font-bold text-green-600">+৳{{ "%.2f"|format(total_in|float) }}</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-500 uppercase font-bold">Total Withdrawals</p>
+                <p class="text-xl font-bold text-red-600">-৳{{ "%.2f"|format(total_out|float) }}</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-500 uppercase font-bold">Bank Revenue</p>
+                <p class="text-xl font-bold text-blue-600">৳{{ "%.2f"|format(total_fees|float) }}</p>
+            </div>
+        </div>
+
+        <!-- Transaction Table -->
+        <table class="w-full text-left border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">ID</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">Time</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">Customer</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">Type</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">Details (From/To)</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">Description</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase text-right">Amount</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase text-right">Bank Fee</th>
+                    <th class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr class="border-b border-gray-300">
+                    <td class="border border-gray-300 py-2 px-3 text-xs font-mono">#{{ t.id }}</td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs">{{ t.created_at.strftime('%I:%M %p') }}</td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs font-bold">
+                        {% if t.from_account %}
+                        {{ t.from_account.owner.full_name }}
+                        {% elif t.to_account %}
+                        {{ t.to_account.owner.full_name }}
+                        {% else %}
+                        System
+                        {% endif %}
+                    </td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs font-bold uppercase">{{ t.transaction_type }}
+                    </td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs text-gray-600">
+                        {% if t.transaction_type == 'Transfer' %}
+                        <div class="flex flex-col space-y-1">
+                            <span><span class="font-semibold">From:</span> {{ t.from_account.account_number }}</span>
+                            <span><span class="font-semibold">To:</span> {{ t.to_account.account_number }}</span>
+                        </div>
+                        {% elif t.transaction_type == 'Deposit' %}
+                        <span>To: {{ t.to_account.account_number }}</span>
+                        {% else %}
+                        <span>From: {{ t.from_account.account_number }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs italic text-gray-500">{{ t.description or '-' }}
+                    </td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs font-mono font-bold text-right">
+                        ৳{{ "%.2f"|format(t.amount|float) }}
+                    </td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs font-mono text-right text-blue-600">
+                        ৳{{ "%.2f"|format(t.fee|float) }}
+                    </td>
+                    <td class="border border-gray-300 py-2 px-3 text-xs text-center uppercase">
+                        {{ t.status }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Signature Section -->
+        <div class="mt-16 flex justify-between px-8 no-print-break">
+            <div class="text-center">
+                <div class="border-t border-gray-400 w-48 mb-2"></div>
+                <p class="text-xs font-bold uppercase text-gray-500">Prepared By ({{ current_user.role.name }})</p>
+            </div>
+            <div class="text-center">
+                <div class="border-t border-gray-400 w-48 mb-2"></div>
+                <p class="text-xs font-bold uppercase text-gray-500">Authorized Signature</p>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center text-xs text-gray-400 border-t pt-4">
+            &copy; {{ today.year }} Trust Mora Bank. All rights reserved.
+        </div>
+
+</body>
+
+</html>
