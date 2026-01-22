@@ -1,163 +1,91 @@
-# Trust Mora Bank - Online Banking Transaction System
+# Trust Mora Bank - Secure Digital Banking System
 
-A complete mini banking transaction management system built with Flask, MySQL, and Tailwind CSS.
+A premium, full-featured online banking management system with a modern glassmorphism aesthetic, built using PHP, MySQL, and Tailwind CSS.
 
 ## Features
 
-### Customer Features
-- ✅ Account registration with auto-account creation
-- ✅ Secure login/logout
-- ✅ View account balance and details
-- ✅ Deposit money
-- ✅ Withdraw money (with balance validation)
-- ✅ Transfer money to other accounts
-- ✅ View complete transaction history
-- ✅ Real-time notifications
-- ✅ Update profile information
+### Customer Experience
 
-### Bank Official (Admin) Features
-- ✅ System overview dashboard
-- ✅ Manage all customer accounts
-- ✅ Suspend/activate accounts
-- ✅ Monitor all transactions
-- ✅ View system statistics
-- ✅ Access reports
+- ✅ **Dynamic Dashboards**: Real-time balance and transaction activity charts (Chart.js).
+- ✅ **Live Profiles**: Update personal metadata (Bio, Phone, Address, Gender) with instant DB reflection.
+- ✅ **Secure Transactions**: Live Deposit, Withdrawal, and Transfers with automated protocol fees.
+- ✅ **Account Lifecycle**: Self-signup followed by mandatory Admin approval protocol.
+- ✅ **Notifications**: Instant system-wide operational alerts.
+- ✅ **Glassmorphism UI**: High-end dark/light theme toggle with persistent storage.
 
-### Staff/Teller Features
-- ✅ Assist customers with transactions
-- ✅ Process deposits and withdrawals
-- ✅ View handled transactions
+### Admin (Bank Official) Command
+
+- ✅ **Entity Control**: Global oversight of all users with Approve/Suspend/Delete protocols.
+- ✅ **Intelligence Complex**: Advanced statistical reports, transaction trends, and volume charts.
+- ✅ **System Analytics**: Export banking ledgers to CSV or prepare for physical print synchronization.
+- ✅ **Global Configs**: Real-time management of Bank Name, Transfer Fees, and Maintenance Modes.
+
+### Staff Resolution Core
+
+- ✅ **Manual Intervention**: Assist subjects with direct deposit and withdrawal overrides.
+- ✅ **Operational Logs**: Comprehensive audit trail of today's assisted resolutions.
 
 ## Tech Stack
 
-- **Backend**: Flask 3.0.0 (Python)
-- **Database**: MySQL with SQLAlchemy ORM
-- **Frontend**: Tailwind CSS
-- **Authentication**: Flask-Login
-- **Security**: Werkzeug password hashing, CSRF protection
+- **Backend**: Core PHP 8.x
+- **Database**: MySQL (Partitioned Architecture)
+- **Frontend**: Tailwind CSS & Vanilla JavaScript
+- **Visualization**: Chart.js
+- **Design System**: Industrial Glassmorphism (Dark/Light)
 
 ## Installation
 
 ### 1. Prerequisites
-- Python 3.8+
-- XAMPP (for MySQL)
-- Modern web browser
 
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+- XAMPP/WAMPP (PHP 7.4+ & MySQL)
+- Modern Web Browser
 
-### 3. Setup Database
+### 2. Database Setup
 
-**Option A: Automatic (Recommended)**
-1. Start XAMPP and run MySQL
-2. Run the Flask app - database will be created automatically:
-```bash
-python main.py
-```
+1. Start MySQL via XAMPP.
+2. Open phpMyAdmin and create a database named `securebank`.
+3. Import the `securebank.sql` file located in the root directory.
+   - The script will automatically create the partitioned tables and seed default roles and settings.
 
-**Option B: Manual**
-1. Start XAMPP and run MySQL
-2. Open phpMyAdmin (http://localhost/phpmyadmin)
-3. Import `securebank.sql` file
+### 3. Application Deployment
 
-### 4. Run Application
-```bash
-python main.py
-```
-
-Access at: **http://localhost:5000**
-
-## Default Accounts
-
-### Admin
-- **Email**: admin@trustmorabank.com
-- **Password**: admin123
-- **Role**: Bank Official
-
-### Sample Customers (if using securebank.sql)
-- **Email**: john@example.com | **Password**: admin123
-- **Email**: jane@example.com | **Password**: admin123
-
-### Staff
-- **Email**: staff@trustmorabank.com | **Password**: admin123
+1. Move the project folder into your web server root (e.g., `htdocs`).
+2. Point your browser to: **<http://localhost/TrustMora>**
 
 ## Project Structure
 
 ```
 PROJECT/
-├── main.py                 # Flask application & routes
-├── requirements.txt        # Python dependencies
-├── securebank.sql         # Database schema with sample data
-├── static/
-│   └── favicon.png        # Bank favicon
-└── templates/
-    ├── base.html          # Base template with navigation
-    ├── index.html         # Homepage
-    ├── login.html         # Login page
-    ├── signup.html        # Registration page
-    ├── dashboard.html     # Customer dashboard
-    ├── deposit.html       # Deposit form
-    ├── withdraw.html      # Withdrawal form
-    ├── transfer.html      # Transfer form
-    ├── transactions.html  # Transaction history
-    ├── profile.html       # User profile
-    ├── admin_dashboard.html       # Admin overview
-    ├── admin_accounts.html        # Account management
-    ├── admin_transactions.html    # All transactions
-    ├── admin_reports.html         # Reports page
-    ├── staff_dashboard.html       # Staff homepage
-    └── staff_assist.html          # Customer assistance
-
+├── php_version/            # Main application core
+│   ├── admin/              # Administrator logistics
+│   ├── customer/           # User interface
+│   ├── staff/              # Staff resolution core
+│   ├── includes/           # Functional logic (functions.php, db.php)
+│   ├── templates/          # HTML view fragments (Glassmorphism based)
+│   └── static/             # Assets (CSS, Icons, Uploads)
+├── securebank.sql          # Partitioned database schema
+└── README.md               # Documentation
 ```
 
-## Database Schema
+## Database Partitioning
 
-### Tables
-1. **user** - System users (Customer, BankOfficial, Staff)
-2. **account** - Bank accounts with balances
-3. **transaction** - Transaction records (Deposit, Withdrawal, Transfer)
-4. **notification** - User notifications
+The system utilizes a high-integrity partitioned data model:
 
-## Usage
+1. **users** - Central Authentication (Email, Hash, Role Binding).
+2. **admin_details** - Exclusive Administrator metadata.
+3. **staff_details** - Exclusive Staff professional profiles.
+4. **customer_details** - Comprehensive Customer KYC data.
+5. **accounts** - Financial vaults linked to Users.
+6. **transactions** - Immutable operational ledger.
+7. **settings** - Global system configuration parameters.
 
-### For Customers
-1. Sign up at `/signup`
-2. Account automatically created with $0 balance
-3. Login and navigate to dashboard
-4. Use deposit/withdraw/transfer features
-5. View transaction history
+## Security Architecture
 
-### For Bank Officials
-1. Login with admin credentials
-2. Access admin dashboard
-3. Manage customer accounts
-4. Monitor all transactions
-5. Generate reports
-
-### For Staff
-1. Login with staff credentials
-2. Use assist feature to help customers
-3. Process deposits/withdrawals on behalf of customers
-
-## Security Features
-
-- Password hashing using Werkzeug
-- CSRF protection on all forms
-- Login required decorators
-- Role-based access control
-- SQL injection prevention via SQLAlchemy
-- Session management
-
-## Development
-
-Built by: **Timon Biswas**
-
-## License
-
-All Rights Reserved - Proprietary Software
+- **Role-Based Access Control (RBAC)**: Strict permission isolation.
+- **Data Integrity**: Foreign key constraints with cascading logic.
+- **Input Sanitization**: Prepared statements using PDO.
+- **Session Security**: Multi-point validation and attempt limiting.
 
 ---
-
-**Trust Mora Bank** - Your trusted online banking partner 🏦
+Built by: **Timon Biswas**
+**Trust Mora Bank** - "Absolute Control. Absolute Security." 🏦
