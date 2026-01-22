@@ -1,0 +1,119 @@
+<section class="max-w-7xl mx-auto py-12 px-6">
+    <div class="mb-10 flex justify-between items-end border-b border-primary-500/10 pb-6">
+        <div>
+            <h1 class="text-4xl font-black gradient-text tracking-tighter uppercase">Entity Control</h1>
+            <p class="text-gray-500 font-bold text-[10px] tracking-[0.2em] uppercase">User Permissions & Lifecycle
+                Management</p>
+        </div>
+        <a href="dashboard.php"
+            class="text-[10px] font-black text-primary-400 uppercase tracking-widest hover:underline"><i
+                class="fas fa-chevron-left mr-2"></i>Nexus Dashboard</a>
+    </div>
+
+    <?php if (isset($_SESSION['flash'])): ?>
+    <div
+        class="mb-8 p-4 bg-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500/20 border border-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500 text-white rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
+        <i class="fas fa-circle-notch fa-spin mr-2"></i>
+        <?php echo $_SESSION['flash']['message'];
+            unset($_SESSION['flash']); ?>
+    </div>
+    <?php endif; ?>
+
+    <div class="glass-light rounded-[2rem] border border-primary-500/10 overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-900/50 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                        <th class="py-6 px-8 border-b border-primary-500/10 border-r border-primary-500/5">Entity
+                            Identity</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 border-r border-primary-500/5">Permission
+                            Level</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 border-r border-primary-500/5">Account
+                            Status</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 text-center">Protocol Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-primary-500/5">
+                    <?php foreach ($users as $u): ?>
+                    <tr class="hover:bg-primary-500/5 transition-colors group">
+                        <td class="py-6 px-8">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-black border border-primary-500/20">
+                                    <?php echo substr($u['full_name'], 0, 1); ?>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-black text-white uppercase">
+                                        <?php echo $u['full_name']; ?>
+                                    </p>
+                                    <p class="text-[10px] text-gray-500 font-bold">
+                                        <?php echo $u['email']; ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-6 px-8">
+                            <?php if ($u['account_status']): ?>
+                            <span
+                                class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest 
+                                        <?php echo $u['account_status'] == 'Active' ? 'bg-success-500/20 text-success-400' : ($u['account_status'] == 'Pending' ? 'bg-gold-500/20 text-gold-400' : 'bg-red-500/20 text-red-400'); ?>">
+                                <?php echo $u['account_status']; ?>
+                            </span>
+                            <?php else: ?>
+                            <span class="text-[9px] font-black text-gray-600 uppercase">NO ACCOUNT</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="py-6 px-8">
+                            <div
+                                class="flex justify-center items-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <?php if ($u['role_name'] === 'Customer'): ?>
+                                <?php if ($u['account_status'] === 'Pending'): ?>
+                                <a href="users.php?action=approve&id=<?php echo $u['id']; ?>"
+                                    class="p-2 bg-success-500/10 text-success-400 rounded-lg hover:bg-success-500 hover:text-white transition-all text-xs"
+                                    title="Approve Account">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <?php elseif ($u['account_status'] === 'Active'): ?>
+                                <a href="users.php?action=suspend&id=<?php echo $u['id']; ?>"
+                                    class="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500 hover:text-white transition-all text-xs"
+                                    title="Suspend Account">
+                                    <i class="fas fa-ban"></i>
+                                </a>
+                                <?php elseif ($u['account_status'] === 'Suspended'): ?>
+                                <a href="users.php?action=approve&id=<?php echo $u['id']; ?>"
+                                    class="p-2 bg-success-500/10 text-success-400 rounded-lg hover:bg-success-500 hover:text-white transition-all text-xs"
+                                    title="Reactivate Account">
+                                    <i class="fas fa-user-check"></i>
+                                </a>
+                                <?php endif; ?>
+
+                                <a href="users.php?action=promote&id=<?php echo $u['id']; ?>"
+                                    class="p-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white transition-all text-xs"
+                                    title="Promote to Staff">
+                                    <i class="fas fa-chevron-up"></i>
+                                </a>
+                                <?php elseif ($u['role_name'] === 'Staff'): ?>
+                                <a href="users.php?action=demote&id=<?php echo $u['id']; ?>"
+                                    class="p-2 bg-gold-400/10 text-gold-400 rounded-lg hover:bg-gold-400 hover:text-white transition-all text-xs"
+                                    title="Demote to Customer">
+                                    <i class="fas fa-chevron-down"></i>
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($u['role_name'] !== 'Admin'): ?>
+                                <a href="users.php?action=delete&id=<?php echo $u['id']; ?>"
+                                    onclick="return confirm('EXTERMINATE ENTITY? All associated data will be purged.')"
+                                    class="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500 hover:text-white transition-all text-xs"
+                                    title="Purge Entity">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,181 @@
+<div id="dashboard-data" data-transactions='<?php echo json_encode($chart_data); ?>' data-balance='<?php echo $account['
+    balance'] ?? 0; ?>' class="hidden"></div>
+
+<section class="max-w-7xl mx-auto py-12 px-6">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold gradient-text mb-2">Welcome,
+            <?php echo $_SESSION['full_name']; ?>!
+        </h1>
+        <p class="text-gray-400 text-sm">Your digital banking terminal is active and secure.</p>
+    </div>
+
+    <div class="glass-light p-8 rounded-2xl border border-primary-500/30 mb-8 relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Account Number</p>
+                <p class="text-xl font-bold text-white font-mono tracking-tighter">
+                    <?php echo $account['account_number'] ?? 'N/A'; ?>
+                </p>
+                <div class="mt-6">
+                    <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Available Funds</p>
+                    <p class="text-4xl font-bold text-white">৳
+                        <?php echo number_format($account['balance'] ?? 0, 2); ?>
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 md:mt-0 text-right">
+                <span
+                    class="px-4 py-1 bg-success-500/20 text-success-400 border border-success-500/30 rounded-full text-xs font-bold uppercase tracking-widest">
+                    <?php echo $account['account_type'] ?? 'Savings'; ?>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+        <a href="withdraw.php"
+            class="glass-light p-4 rounded-xl border border-red-500/20 hover:border-red-500 transition-all flex items-center space-x-4">
+            <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center"><i
+                    class="fas fa-minus text-red-400"></i></div>
+            <span class="font-bold text-sm">Withdraw</span>
+        </a>
+        <a href="transfer.php"
+            class="glass-light p-4 rounded-xl border border-primary-500/20 hover:border-primary-500 transition-all flex items-center space-x-4">
+            <div class="w-10 h-10 bg-primary-500/20 rounded-lg flex items-center justify-center"><i
+                    class="fas fa-exchange-alt text-primary-400"></i></div>
+            <span class="font-bold text-sm">Transfer</span>
+        </a>
+        <a href="transactions.php"
+            class="glass-light p-4 rounded-xl border border-yellow-500/20 hover:border-yellow-500 transition-all flex items-center space-x-4">
+            <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center"><i
+                    class="fas fa-history text-yellow-400"></i></div>
+            <span class="font-bold text-sm">History</span>
+        </a>
+        <a href="deposit.php"
+            class="glass-light p-4 rounded-xl border border-success-500/20 hover:border-success-500 transition-all flex items-center space-x-4">
+            <div class="w-10 h-10 bg-success-500/20 rounded-lg flex items-center justify-center"><i
+                    class="fas fa-university text-success-400"></i></div>
+            <span class="font-bold text-sm">Deposit</span>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+            <div class="glass-light p-6 rounded-xl border border-primary-500/30 h-64 relative">
+                <h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Transaction Volume</h3>
+                <canvas id="balanceChart"></canvas>
+            </div>
+
+            <div class="glass-light p-6 rounded-xl border border-primary-500/30">
+                <h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Recent Tx</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <tbody class="divide-y divide-slate-800">
+                            <?php foreach ($recent_transactions as $t): ?>
+                            <tr>
+                                <td class="py-3 text-[10px] text-gray-500 font-mono">
+                                    <?php echo date('d M, y', strtotime($t['created_at'])); ?>
+                                </td>
+                                <td class="py-3 font-bold text-xs">
+                                    <?php echo $t['transaction_type']; ?>
+                                </td>
+                                <td
+                                    class="py-3 font-bold text-right text-xs <?php echo ($t['transaction_type'] == 'Deposit' || ($t['transaction_type'] == 'Transfer' && $t['to_account_id'] == $account['id'])) ? 'text-success-400' : 'text-red-400'; ?>">
+                                    ৳
+                                    <?php echo number_format($t['amount'], 2); ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-8">
+            <div class="glass-light p-6 rounded-xl border border-primary-500/30 h-fit">
+                <h3 class="text-sm font-bold text-gray-400 uppercase mb-6">Notifications</h3>
+                <?php if ($notifications): ?>
+                <div class="space-y-4">
+                    <?php foreach ($notifications as $n): ?>
+                    <div class="p-3 bg-slate-900/40 rounded-lg border-l-2 border-primary-400">
+                        <p class="text-[11px] leading-relaxed">
+                            <?php echo $n['message']; ?>
+                        </p>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <p class="text-gray-600 text-[10px] text-center italic">All caught up.</p>
+                <?php endif; ?>
+            </div>
+
+            <div class="glass-light p-6 rounded-xl border border-primary-500/30 h-fit">
+                <h3 class="text-sm font-bold text-gray-400 uppercase mb-6">Currency Hub</h3>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <label class="block text-[10px] font-black text-gray-500 uppercase mb-1">USD Amount</label>
+                        <input type="number" id="usd-input" placeholder="0.00"
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-xs focus:border-primary-500 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-center">
+                        <i class="fas fa-exchange-alt text-gray-700"></i>
+                    </div>
+                    <div class="relative">
+                        <label class="block text-[10px] font-black text-gray-500 uppercase mb-1">BDT Equivalent</label>
+                        <div id="bdt-output"
+                            class="w-full bg-slate-900/20 border border-white/5 rounded-lg px-3 py-2 text-xs text-primary-400 font-bold">
+                            ৳0.00</div>
+                    </div>
+                    <p class="text-[9px] text-gray-600 italic mt-2 text-center">Live Rate: 1 USD = ৳110.50</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dataEl = document.getElementById('dashboard-data');
+        const logs = JSON.parse(dataEl.dataset.transactions || '[]');
+
+        const ctx = document.getElementById('balanceChart').getContext('2d');
+        const processed = logs.slice(0, 10).reverse();
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: processed.map(l => new Date(l.date).toLocaleDateString()),
+                datasets: [{
+                    label: 'Activity',
+                    data: processed.map(l => l.amount),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#4b5563', font: { size: 9 } } }
+                }
+            }
+        });
+
+        // Currency Converter Logic
+        const usdInput = document.getElementById('usd-input');
+        const bdtOutput = document.getElementById('bdt-output');
+        const rate = 110.50;
+
+        if (usdInput && bdtOutput) {
+            usdInput.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) || 0;
+                bdtOutput.innerText = '৳' + (val * rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            });
+        }
+    });
+</script>

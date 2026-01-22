@@ -1,0 +1,70 @@
+<section class="max-w-7xl mx-auto py-12 px-6">
+    <div class="mb-10 flex justify-between items-end border-b border-primary-500/10 pb-6">
+        <div>
+            <h1 class="text-4xl font-black gradient-text tracking-tighter uppercase">Asset Injection Hub</h1>
+            <p class="text-gray-500 font-bold text-[10px] tracking-[0.2em] uppercase">Manual Ledger Intervention</p>
+        </div>
+        <a href="accounts.php"
+            class="text-[10px] font-black text-primary-400 uppercase tracking-widest hover:underline"><i
+                class="fas fa-chevron-left mr-2"></i>Vault Oversight</a>
+    </div>
+
+    <div class="max-w-3xl mx-auto">
+        <div class="glass-light p-10 rounded-[2.5rem] border border-primary-500/20 relative overflow-hidden group">
+            <div class="relative z-10">
+                <!-- Target Header -->
+                <div
+                    class="flex items-center justify-between mb-10 p-6 bg-slate-900/50 rounded-3xl border border-primary-500/10">
+                    <div>
+                        <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Target Guardian
+                        </p>
+                        <p class="text-lg font-black text-white uppercase">
+                            <?php echo $account['full_name']; ?>
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Current Liquidity
+                        </p>
+                        <p class="text-lg font-black text-success-500">
+                            ৳
+                            <?php echo number_format($account['balance'], 0); ?>
+                        </p>
+                    </div>
+                </div>
+
+                <form method="POST" class="space-y-8">
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Injection
+                            Magnitude (৳)</label>
+                        <input type="number" step="0.01" name="amount" required placeholder="0.00"
+                            class="w-full bg-slate-900/80 border border-primary-500/20 rounded-2xl px-8 py-6 text-3xl font-black text-white focus:border-primary-500 outline-none transition-all">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Intervention
+                            Memo</label>
+                        <input type="text" name="description" placeholder="PROTOCOL REASON"
+                            class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-4 text-xs font-bold text-white focus:border-primary-500 outline-none transition-all uppercase">
+                    </div>
+
+                    <div class="p-4 bg-gold-400/5 border border-gold-400/20 rounded-2xl flex items-start space-x-4">
+                        <i class="fas fa-exclamation-triangle text-gold-400 mt-1 text-xs"></i>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase leading-relaxed">Warning: Asset
+                            injection is an atomic operation. Ledger updates are instantaneous and traceable.</p>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full py-6 bg-gradient-to-r from-primary-600 to-indigo-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.4em] hover:shadow-2xl hover:shadow-primary-500/40 transform hover:scale-[1.01] transition-all">Initiate
+                        Injection</button>
+                </form>
+            </div>
+
+            <!-- Decoration -->
+            <div
+                class="absolute -top-10 -right-10 w-40 h-40 bg-primary-500/5 rounded-full blur-3xl group-hover:bg-primary-500/10 transition-colors">
+            </div>
+        </div>
+    </div>
+</section>

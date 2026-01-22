@@ -1,6 +1,6 @@
-# Ignore PHP version for this repository
-php_version/
-index.php
+# Track PHP version
+!php_version/
+!index.php
 
 # Ignore OS files
 Thumbs.db

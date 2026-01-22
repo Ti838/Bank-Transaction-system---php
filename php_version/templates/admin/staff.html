@@ -1,0 +1,144 @@
+<section class="max-w-7xl mx-auto py-12 px-6">
+    <div class="mb-10 flex justify-between items-end border-b border-primary-500/10 pb-6">
+        <div>
+            <h1 class="text-4xl font-black gradient-text tracking-tighter uppercase">Personnel HQ</h1>
+            <p class="text-gray-500 font-bold text-[10px] tracking-[0.2em] uppercase">Staff Deployment & Operational
+                Access</p>
+        </div>
+        <button onclick="document.getElementById('createStaffModal').classList.remove('hidden')"
+            class="px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl shadow-2xl transition-all flex items-center group">
+            <i class="fas fa-plus mr-3 group-hover:rotate-90 transition-transform"></i> Deploy New Agent
+        </button>
+    </div>
+
+    <?php if (isset($_SESSION['flash'])): ?>
+        <div
+            class="mb-8 p-4 bg-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500/20 border border-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500 text-white rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
+            <i class="fas fa-circle-notch fa-spin mr-2"></i>
+            <?php echo $_SESSION['flash']['message'];
+            unset($_SESSION['flash']); ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="glass-light rounded-[2rem] border border-primary-500/10 overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-900/50 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                        <th class="py-6 px-8 border-b border-primary-500/10">Agent Identity</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10">Communication Node</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 text-center">Gender</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 text-center">Activation Date</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 text-center">Protocol Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-primary-500/5">
+                    <?php if ($staff_members): ?>
+                        <?php foreach ($staff_members as $s): ?>
+                            <tr class="hover:bg-primary-500/5 transition-colors group">
+                                <td class="py-6 px-8">
+                                    <div class="flex items-center space-x-4">
+                                        <div
+                                            class="w-10 h-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-black border border-primary-500/20 uppercase">
+                                            <?php echo substr($s['full_name'], 0, 1); ?>
+                                        </div>
+                                        <p class="text-sm font-black text-white uppercase">
+                                            <?php echo $s['full_name']; ?>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td class="py-6 px-8">
+                                    <p class="text-[10px] text-gray-400 font-bold">
+                                        <?php echo $s['email']; ?>
+                                    </p>
+                                </td>
+                                <td class="py-6 px-8 text-center">
+                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">
+                                        <?php echo $s['gender'] ?: 'UNKNOWN'; ?>
+                                    </span>
+                                </td>
+                                <td class="py-6 px-8 text-center text-[10px] text-gray-500 font-bold uppercase">
+                                    <?php echo date('d M Y', strtotime($s['created_at'])); ?>
+                                </td>
+                                <td class="py-6 px-8">
+                                    <div class="flex justify-center items-center space-x-3">
+                                        <a href="users.php?action=demote&id=<?php echo $s['id']; ?>"
+                                            class="px-3 py-1.5 bg-gold-400/10 text-gold-400 border border-gold-400/20 rounded-lg hover:bg-gold-400 hover:text-white transition-all text-[9px] font-black uppercase tracking-widest">
+                                            Demote
+                                        </a>
+                                        <a href="users.php?action=delete&id=<?php echo $s['id']; ?>"
+                                            onclick="return confirm('DECOMMISSION AGENT? This will sever all access.')"
+                                            class="px-3 py-1.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition-all text-[9px] font-black uppercase tracking-widest">
+                                            Decommission
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5" class="py-20 text-center">
+                                <i class="fas fa-user-slash text-4xl text-gray-800 mb-4 block"></i>
+                                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Agents
+                                    Deployed in HQ</p>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Deployment Modal -->
+<div id="createStaffModal"
+    class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center z-50 px-4">
+    <div class="glass-light p-10 rounded-[3rem] border border-primary-500/20 max-w-md w-full relative shadow-2xl">
+        <button onclick="document.getElementById('createStaffModal').classList.add('hidden')"
+            class="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+
+        <h2 class="text-3xl font-black gradient-text uppercase tracking-tighter mb-2">Agent Deployment</h2>
+        <p
+            class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-8 border-b border-primary-500/10 pb-4">
+            Initialize New Staff Credentials</p>
+
+        <form method="POST" class="space-y-6">
+            <input type="hidden" name="action" value="create">
+            <div class="space-y-1">
+                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest ml-4">Codename (Full
+                    Name)</label>
+                <input type="text" name="full_name" required
+                    class="w-full bg-slate-900/80 border border-primary-500/10 rounded-2xl px-6 py-4 text-white focus:border-primary-500 outline-none transition-all text-xs font-bold uppercase">
+            </div>
+            <div class="space-y-1">
+                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest ml-4">Target Node
+                    (Email)</label>
+                <input type="email" name="email" required
+                    class="w-full bg-slate-900/80 border border-primary-500/10 rounded-2xl px-6 py-4 text-white focus:border-primary-500 outline-none transition-all text-xs font-bold uppercase">
+            </div>
+            <div class="space-y-1">
+                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest ml-4">Initial Access
+                    Key (Password)</label>
+                <input type="text" name="password" required
+                    class="w-full bg-slate-900/80 border border-primary-500/10 rounded-2xl px-6 py-4 text-white focus:border-primary-500 outline-none transition-all text-xs font-bold uppercase"
+                    placeholder="TEMPORARY KEY">
+            </div>
+            <div class="space-y-1">
+                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest ml-4">Identity Matrix
+                    (Gender)</label>
+                <select name="gender"
+                    class="w-full bg-slate-900/80 border border-primary-500/10 rounded-2xl px-6 py-4 text-white focus:border-primary-500 outline-none transition-all text-[10px] font-black uppercase tracking-widest">
+                    <option value="Male">MALE</option>
+                    <option value="Female">FEMALE</option>
+                    <option value="Other">OTHER</option>
+                </select>
+            </div>
+            <button type="submit"
+                class="w-full py-5 bg-gradient-to-r from-primary-600 to-indigo-700 text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.3em] hover:shadow-xl hover:shadow-primary-500/20 transition-all mt-6">
+                Confirm Deployment
+            </button>
+        </form>
+    </div>
+</div>

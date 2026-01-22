@@ -1,0 +1,143 @@
+<div id="admin-data" data-growth-labels='<?php echo json_encode($growth_labels); ?>'
+    data-growth-values='<?php echo json_encode($growth_data); ?>'
+    data-volume-labels='<?php echo json_encode($chart_dates); ?>'
+    data-volume-values='<?php echo json_encode($chart_volumes); ?>' class="hidden"></div>
+
+<section class="max-w-7xl mx-auto py-12 px-6">
+    <div class="mb-10 flex justify-between items-end border-b border-primary-500/10 pb-6">
+        <div>
+            <h1 class="text-4xl font-black gradient-text tracking-tighter uppercase">Command Center</h1>
+            <p class="text-gray-500 font-bold text-[10px] tracking-[0.2em] uppercase">Global Database Access Active</p>
+        </div>
+        <div class="flex space-x-2">
+            <span class="w-2 h-2 rounded-full bg-success-500 animate-pulse"></span>
+            <span class="text-[10px] font-bold text-success-500 uppercase tracking-widest">System Online</span>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div class="glass-light p-6 rounded-2xl border border-primary-500/20">
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Total Node Users</p>
+            <h3 class="text-3xl font-black text-white">
+                <?php echo $total_customers; ?>
+            </h3>
+        </div>
+        <div class="glass-light p-6 rounded-2xl border border-success-500/20">
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Total Liquidity</p>
+            <h3 class="text-3xl font-black text-white">৳
+                <?php echo number_format($total_balance, 0); ?>
+            </h3>
+        </div>
+        <div class="glass-light p-6 rounded-2xl border border-gold-400/20">
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Cycle Revenue</p>
+            <h3 class="text-3xl font-black text-white">৳
+                <?php echo number_format($total_revenue, 0); ?>
+            </h3>
+        </div>
+        <div class="glass-light p-6 rounded-2xl border border-primary-500/20">
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">24H Operations</p>
+            <h3 class="text-3xl font-black text-white">
+                <?php echo $today_transactions_count; ?>
+            </h3>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div class="glass-light p-6 rounded-2xl border border-primary-500/20">
+            <h3
+                class="text-xs font-black text-gray-500 uppercase tracking-widest mb-6 border-l-2 border-primary-500 pl-3">
+                Network Growth</h3>
+            <div class="h-64"><canvas id="userGrowthChart"></canvas></div>
+        </div>
+        <div class="glass-light p-6 rounded-2xl border border-primary-500/20">
+            <h3
+                class="text-xs font-black text-gray-500 uppercase tracking-widest mb-6 border-l-2 border-primary-500 pl-3">
+                Operational Volume</h3>
+            <div class="h-64"><canvas id="transactionVolumeChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Table remains same but with clean styles -->
+    <div class="glass-light rounded-2xl border border-primary-500/20 overflow-hidden">
+        <div class="p-6 border-b border-primary-500/10">
+            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">Real-time Stream</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <tbody class="divide-y divide-slate-800">
+                    <?php foreach ($recent_transactions as $t): ?>
+                        <tr class="hover:bg-primary-500/5 transition-colors">
+                            <td class="py-4 px-6 text-[10px] font-mono text-gray-500">
+                                <?php echo date('H:i:s', strtotime($t['created_at'])); ?>
+                            </td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="text-[10px] font-black uppercase tracking-widest <?php echo $t['transaction_type'] == 'Deposit' ? 'text-success-500' : 'text-primary-400'; ?>">
+                                    <?php echo $t['transaction_type']; ?>
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 font-bold text-sm text-white">
+                                ৳
+                                <?php echo number_format($t['amount'], 2); ?>
+                            </td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="px-3 py-1 bg-success-500/10 text-success-500 text-[9px] font-black uppercase rounded-full border border-success-500/20">SECURED</span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dataEl = document.getElementById('admin-data');
+        const growthLabels = JSON.parse(dataEl.dataset.growthLabels);
+        const growthValues = JSON.parse(dataEl.dataset.growthValues);
+        const volumeLabels = JSON.parse(dataEl.dataset.volumeLabels);
+        const volumeValues = JSON.parse(dataEl.dataset.volumeValues);
+
+        const chartConfig = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: '#4b5563', font: { size: 9, weight: 'bold' } } },
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, border: { dash: [5, 5] }, ticks: { color: '#4b5563', font: { size: 9 } } }
+            }
+        };
+
+        new Chart(document.getElementById('userGrowthChart'), {
+            type: 'line',
+            data: {
+                labels: growthLabels,
+                datasets: [{
+                    data: growthValues,
+                    borderColor: '#60a5fa',
+                    backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: chartConfig
+        });
+
+        new Chart(document.getElementById('transactionVolumeChart'), {
+            type: 'bar',
+            data: {
+                labels: volumeLabels,
+                datasets: [{
+                    data: volumeValues,
+                    backgroundColor: '#34d399',
+                    borderRadius: 5
+                }]
+            },
+            options: chartConfig
+        });
+    });
+</script>

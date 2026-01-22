@@ -1,0 +1,144 @@
+<div class="no-print">
+    <!-- Navbar placeholder, render() includes it -->
+</div>
+
+<section class="max-w-7xl mx-auto py-12 px-6 flex justify-center">
+    <!-- Receipt Card -->
+    <div
+        class="bg-white text-slate-900 w-full max-w-lg p-12 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.4)] relative overflow-hidden border border-white/20">
+        <!-- Brand Header -->
+        <div class="text-center mb-10">
+            <div
+                class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-12 shadow-xl">
+                <i class="fas fa-atom text-white text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-black uppercase tracking-tighter">Trust Mora Bank</h1>
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">Quantum Ledger Proof</p>
+        </div>
+
+        <!-- Magnitude -->
+        <div class="text-center mb-10 border-y border-dashed border-gray-200 py-10">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Operation Magnitude</p>
+            <h2 class="text-5xl font-black tracking-tighter">৳
+                <?php echo number_format($transaction['amount'], 2); ?>
+            </h2>
+            <?php if ($transaction['fee'] > 0): ?>
+            <p class="text-[9px] font-bold text-gray-400 mt-2 uppercase">Tax:
+                ৳
+                <?php echo number_format($transaction['fee'], 2); ?>
+            </p>
+            <?php endif; ?>
+            <div class="mt-6">
+                <span
+                    class="px-4 py-1.5 bg-success-500 text-white text-[9px] font-black uppercase rounded-full tracking-widest">Validated</span>
+            </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="space-y-4 mb-10">
+            <div class="flex justify-between items-center">
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Reference ID</span>
+                <span class="text-xs font-black font-mono">#
+                    <?php echo str_pad($transaction['id'], 10, '0', STR_PAD_LEFT); ?>
+                </span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Protocol Date</span>
+                <span class="text-[10px] font-black uppercase">
+                    <?php echo date('d M, Y | H:i', strtotime($transaction['created_at'])); ?>
+                </span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Operation Type</span>
+                <span class="text-[10px] font-black uppercase text-primary-600">
+                    <?php echo $transaction['transaction_type']; ?>
+                </span>
+            </div>
+
+            <div class="border-t border-gray-100 pt-4 mt-4"></div>
+
+            <?php if ($transaction['from_account_number']): ?>
+            <div class="flex justify-between items-start">
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Emitter Node</span>
+                <div class="text-right">
+                    <p class="text-[10px] font-black uppercase">
+                        <?php echo $transaction['from_user_name']; ?>
+                    </p>
+                    <p class="text-xs font-mono text-gray-400">ID:
+                        <?php echo $transaction['from_account_number']; ?>
+                    </p>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($transaction['to_account_number']): ?>
+            <div class="flex justify-between items-start">
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Target Node</span>
+                <div class="text-right">
+                    <p class="text-[10px] font-black uppercase">
+                        <?php echo $transaction['to_user_name']; ?>
+                    </p>
+                    <p class="text-xs font-mono text-gray-400">ID:
+                        <?php echo $transaction['to_account_number']; ?>
+                    </p>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($transaction['description']): ?>
+            <div class="flex justify-between items-center pt-2">
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Memo</span>
+                <span class="text-[10px] font-bold uppercase italic text-gray-500 max-w-[150px] text-right">"
+                    <?php echo $transaction['description']; ?>"
+                </span>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="no-print pt-6 border-t border-gray-100 space-y-4">
+            <button onclick="window.print()"
+                class="w-full py-4 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-primary-600 transition-colors shadow-xl">
+                <i class="fas fa-print mr-2"></i>Physical Export
+            </button>
+            <button onclick="window.history.back()"
+                class="w-full text-[9px] font-black text-gray-400 uppercase tracking-widest hover:text-slate-900">
+                Return to Stream
+            </button>
+        </div>
+
+        <!-- System Footer -->
+        <div class="text-center mt-10 opacity-30">
+            <p class="text-[8px] font-mono uppercase">System-Generated Proof | Immutable Ledger Entry</p>
+        </div>
+
+        <!-- Decoration -->
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-primary-500/5 rounded-full blur-3xl"></div>
+    </div>
+</section>
+
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+            padding: 0 !important;
+        }
+
+        section {
+            padding: 0 !important;
+            margin: 0 !important;
+            display: block !important;
+        }
+
+        .bg-white {
+            shadow: none !important;
+            border: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            border-radius: 0 !important;
+        }
+    }
+</style>
