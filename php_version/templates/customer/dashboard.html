@@ -114,20 +114,23 @@
                 <h3 class="text-sm font-bold text-gray-400 uppercase mb-6">Currency Hub</h3>
                 <div class="space-y-4">
                     <div class="relative">
-                        <label class="block text-[10px] font-black text-gray-500 uppercase mb-1">USD Amount</label>
-                        <input type="number" id="usd-input" placeholder="0.00"
-                            class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-xs focus:border-primary-500 outline-none transition-all">
+                        <label class="block text-[10px] font-black text-gray-500 uppercase mb-1">USD Amount ($)</label>
+                        <input type="number" id="usd-input" placeholder="0.00" step="0.01"
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 outline-none transition-all font-mono">
                     </div>
-                    <div class="flex justify-center">
-                        <i class="fas fa-exchange-alt text-gray-700"></i>
+                    <div class="flex justify-center py-1">
+                        <div
+                            class="w-8 h-8 rounded-full bg-primary-500/10 flex items-center justify-center border border-primary-500/20">
+                            <i class="fas fa-sync-alt text-primary-400 text-[10px] animate-pulse"></i>
+                        </div>
                     </div>
                     <div class="relative">
-                        <label class="block text-[10px] font-black text-gray-500 uppercase mb-1">BDT Equivalent</label>
-                        <div id="bdt-output"
-                            class="w-full bg-slate-900/20 border border-white/5 rounded-lg px-3 py-2 text-xs text-primary-400 font-bold">
-                            ৳0.00</div>
+                        <label class="block text-[10px] font-black text-gray-500 uppercase mb-1">BDT Equivalent
+                            (৳)</label>
+                        <input type="number" id="bdt-input" placeholder="0.00" step="0.01"
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-xs text-success-400 focus:border-success-500 outline-none transition-all font-mono font-bold">
                     </div>
-                    <p class="text-[9px] text-gray-600 italic mt-2 text-center">Live Rate: 1 USD = ৳110.50</p>
+                    <p class="text-[9px] text-gray-600 italic mt-2 text-center">Protocol Rate: 1 USD = ৳110.50</p>
                 </div>
             </div>
         </div>
@@ -166,15 +169,20 @@
             }
         });
 
-        // Currency Converter Logic
+        // Bidirectional Currency Converter Logic
         const usdInput = document.getElementById('usd-input');
-        const bdtOutput = document.getElementById('bdt-output');
+        const bdtInput = document.getElementById('bdt-input');
         const rate = 110.50;
 
-        if (usdInput && bdtOutput) {
+        if (usdInput && bdtInput) {
             usdInput.addEventListener('input', (e) => {
                 const val = parseFloat(e.target.value) || 0;
-                bdtOutput.innerText = '৳' + (val * rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                bdtInput.value = (val * rate).toFixed(2);
+            });
+
+            bdtInput.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) || 0;
+                usdInput.value = (val / rate).toFixed(2);
             });
         }
     });
