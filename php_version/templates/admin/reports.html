@@ -99,37 +99,37 @@
                 </thead>
                 <tbody class="divide-y divide-primary-500/5">
                     <?php foreach ($transactions as $t): ?>
-                        <tr class="hover:bg-primary-500/5 transition-colors group">
-                            <td class="py-6 px-8">
-                                <p class="text-[10px] text-gray-500 font-bold uppercase">
-                                    <?php echo date('d M Y', strtotime($t['created_at'])); ?>
-                                </p>
-                            </td>
-                            <td class="py-6 px-8">
-                                <p class="text-[10px] font-black text-white uppercase">
-                                    <?php echo $t['transaction_type']; ?>
-                                </p>
-                            </td>
-                            <td class="py-6 px-8">
-                                <p class="text-sm font-black text-white">৳
-                                    <?php echo number_format($t['amount'], 0); ?>
-                                </p>
-                            </td>
-                            <td class="py-6 px-8">
-                                <p class="text-[10px] font-bold text-gold-400 uppercase tracking-tighter">
-                                    ৳
-                                    <?php echo number_format($t['fee'], 2); ?>
-                                </p>
-                            </td>
-                            <td class="py-6 px-8">
-                                <div class="flex justify-center">
-                                    <span
-                                        class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border <?php echo $t['status'] == 'Success' ? 'bg-success-500/10 text-success-500 border-success-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'; ?>">
-                                        <?php echo $t['status']; ?>
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr class="hover:bg-primary-500/5 transition-colors group">
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] text-gray-500 font-bold uppercase">
+                                <?php echo date('d M Y', strtotime($t['created_at'])); ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-black text-white uppercase">
+                                <?php echo $t['transaction_type']; ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-sm font-black text-white">৳
+                                <?php echo number_format($t['amount'], 0); ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-bold text-gold-400 uppercase tracking-tighter">
+                                ৳
+                                <?php echo number_format($t['fee'], 2); ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8">
+                            <div class="flex justify-center">
+                                <span
+                                    class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border <?php echo $t['status'] == 'Success' ? 'bg-success-500/10 text-success-500 border-success-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'; ?>">
+                                    <?php echo $t['status']; ?>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -137,62 +137,95 @@
     </div>
 </section>
 
-<!-- Print Structure (Visual Only for Print) -->
-<section class="max-w-4xl mx-auto py-12 px-8 print-only">
-    <div class="mb-12 border-b-4 border-slate-900 pb-10 flex justify-between items-center">
+<!-- Print Structure (Optimized for Hardcopy) -->
+<div class="hidden print:block fixed inset-0 bg-white p-12 z-[9999] overflow-y-auto">
+    <div class="flex justify-between items-start border-b-4 border-black pb-8 mb-10">
         <div>
-            <h1 class="text-4xl font-black text-slate-900 uppercase tracking-tighter">BANK LOGISTICS REPORT</h1>
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Trust Mora Bank - Central
-                Administration Node</p>
+            <h1 class="text-5xl font-black text-black tracking-tighter mb-2">TRUST MORA BANK</h1>
+            <p class="text-[10px] font-bold text-gray-700 uppercase tracking-[0.3em]">Official Logistics Manifest:
+                Central Administration Node</p>
         </div>
         <div class="text-right">
-            <p class="text-[10px] font-black text-slate-900 uppercase uppercase">Generation Epoch</p>
-            <p class="text-xs font-bold text-slate-600 uppercase uppercase">
-                <?php echo date('d M Y'); ?>
+            <p class="text-[9px] font-black text-gray-500 uppercase mb-1">Generated On</p>
+            <p class="text-sm font-bold text-black">
+                <?php echo date('d M Y, H:i:s'); ?>
             </p>
         </div>
     </div>
 
     <div class="grid grid-cols-4 gap-8 mb-12">
-        <div class="border-l-4 border-slate-200 pl-4">
-            <p class="text-[9px] font-black text-slate-400 uppercase uppercase">Events</p>
-            <p class="text-xl font-black text-slate-900 uppercase">
+        <div class="border-l-4 border-gray-100 pl-4">
+            <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Total Events</p>
+            <p class="text-2xl font-black text-black">
                 <?php echo count($transactions); ?>
             </p>
         </div>
-        <!-- Add more print summary elements if needed -->
+        <div class="border-l-4 border-gray-100 pl-4">
+            <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Liquidity In</p>
+            <p class="text-2xl font-black text-black">৳
+                <?php echo number_format($total_in, 0); ?>
+            </p>
+        </div>
+        <div class="border-l-4 border-gray-100 pl-4">
+            <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Liquidity Out</p>
+            <p class="text-2xl font-black text-black">৳
+                <?php echo number_format($total_out, 0); ?>
+            </p>
+        </div>
+        <div class="border-l-4 border-gray-100 pl-4">
+            <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Global Fees</p>
+            <p class="text-2xl font-black text-black">৳
+                <?php echo number_format($total_fees, 0); ?>
+            </p>
+        </div>
     </div>
 
     <table class="w-full border-collapse">
         <thead>
-            <tr class="bg-slate-100 border-b-2 border-slate-900">
-                <th class="py-4 text-left text-[10px] font-black uppercase">Timestamp</th>
-                <th class="py-4 text-left text-[10px] font-black uppercase">Protocol</th>
-                <th class="py-4 text-right text-[10px] font-black uppercase">Magnitude</th>
-                <th class="py-4 text-center text-[10px] font-black uppercase">Status</th>
+            <tr class="bg-gray-50 border-y-2 border-black">
+                <th class="py-4 px-4 text-left text-[10px] font-black uppercase">Epoch (Date)</th>
+                <th class="py-4 px-4 text-left text-[10px] font-black uppercase">Protocol Type</th>
+                <th class="py-4 px-4 text-right text-[10px] font-black uppercase">Magnitude (BDT)</th>
+                <th class="py-4 px-4 text-center text-[10px] font-black uppercase">Integrity</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($transactions as $t): ?>
-                <tr class="border-b border-slate-200">
-                    <td class="py-4 text-[10px] font-bold text-slate-600 uppercase">
-                        <?php echo $t['created_at']; ?>
-                    </td>
-                    <td class="py-4 text-[10px] font-black text-slate-900 uppercase">
-                        <?php echo $t['transaction_type']; ?>
-                    </td>
-                    <td class="py-4 text-right text-[10px] font-black text-slate-900">
-                        ৳
-                        <?php echo number_format($t['amount'], 2); ?>
-                    </td>
-                    <td class="py-4 text-center text-[8px] font-black uppercase">
+            <tr class="border-b border-gray-200">
+                <td class="py-4 px-4 text-[10px] font-bold text-gray-700">
+                    <?php echo date('d M Y, H:i', strtotime($t['created_at'])); ?>
+                </td>
+                <td class="py-4 px-4 text-[10px] font-black text-black uppercase">
+                    <?php echo $t['transaction_type']; ?>
+                </td>
+                <td class="py-4 px-4 text-right text-[11px] font-black text-black">
+                    ৳
+                    <?php echo number_format($t['amount'], 2); ?>
+                </td>
+                <td class="py-4 px-4 text-center">
+                    <span class="text-[8px] font-black uppercase px-2 py-0.5 border border-black">
                         <?php echo $t['status']; ?>
-                    </td>
-                </tr>
+                    </span>
+                </td>
+            </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-</section>
+
+    <div class="mt-20 flex justify-between items-end border-t border-gray-200 pt-8">
+        <div>
+            <p class="text-[10px] font-black text-gray-400 uppercase">Authenticated By</p>
+            <p class="text-xs font-bold text-black">
+                <?php echo $_SESSION['full_name']; ?> (
+                <?php echo $_SESSION['role']; ?>)
+            </p>
+        </div>
+        <div class="text-right">
+            <p class="text-[8px] font-bold text-gray-400 italic">This is a system-generated document and does not
+                require a physical signature.</p>
+        </div>
+    </div>
+</div>
 
 <style>
     @media print {

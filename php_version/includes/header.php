@@ -80,6 +80,42 @@
             background: rgba(255, 255, 255, 0.5) !important;
             color: #0f172a !important;
         }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            header,
+            nav,
+            footer,
+            .no-print,
+            button,
+            #mobile-menu-toggle,
+            #theme-toggle {
+                display: none !important;
+            }
+
+            .glass-light {
+                background: transparent !important;
+                border: 1px solid #ddd !important;
+                backdrop-filter: none !important;
+                color: black !important;
+            }
+
+            .gradient-text {
+                background: none !important;
+                color: black !important;
+                -webkit-text-fill-color: initial !important;
+            }
+
+            .max-w-7xl {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
     </style>
 </head>
 
