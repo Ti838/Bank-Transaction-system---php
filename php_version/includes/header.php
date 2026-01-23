@@ -40,8 +40,13 @@
             background-image: linear-gradient(to right, #60a5fa, #34d399);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            overflow-x: hidden;
         }
 
         .dynamic-money {
@@ -78,7 +83,7 @@
     </style>
 </head>
 
-<body class="text-gray-100 min-h-screen">
+<body class="text-gray-100 min-h-screen flex flex-col">
     <?php if (isset($_SESSION['flash'])): ?>
         <div class="fixed top-24 right-6 z-[100] animate-bounce">
             <div

@@ -1,4 +1,4 @@
-<section class="max-w-7xl mx-auto py-12 px-6">
+<section class="max-w-7xl mx-auto py-12 px-6 flex-grow">
     <div class="mb-10 flex justify-between items-end border-b border-primary-500/10 pb-6">
         <div>
             <h1 class="text-4xl font-black gradient-text tracking-tighter uppercase">Resolution Core</h1>
@@ -11,12 +11,12 @@
     </div>
 
     <?php if (isset($_SESSION['flash'])): ?>
-        <div
-            class="mb-8 p-4 bg-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500/20 border border-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500 text-white rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
-            <i class="fas fa-circle-notch fa-spin mr-2"></i>
-            <?php echo $_SESSION['flash']['message'];
+    <div
+        class="mb-8 p-4 bg-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500/20 border border-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500 text-white rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
+        <i class="fas fa-circle-notch fa-spin mr-2"></i>
+        <?php echo $_SESSION['flash']['message'];
             unset($_SESSION['flash']); ?>
-        </div>
+    </div>
     <?php endif; ?>
 
     <div class="max-w-3xl mx-auto">

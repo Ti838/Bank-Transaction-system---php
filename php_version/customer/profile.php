@@ -3,9 +3,31 @@ require_once '../includes/functions.php';
 require_login();
 
 $user_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT u.email, cd.* FROM users u JOIN customer_details cd ON u.id = cd.user_id WHERE u.id = ?");
+$role = $_SESSION['role'];
+
+// Map roles to their specific detail tables
+$details_table = 'customer_details';
+if ($role === 'Admin')
+    $details_table = 'admin_details';
+if ($role === 'Staff')
+    $details_table = 'staff_details';
+
+$stmt = $pdo->prepare("SELECT u.email, d.* FROM users u JOIN $details_table d ON u.id = d.user_id WHERE u.id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
+
+// Ensure $user is not false to avoid warnings
+if (!$user) {
+    $user = [
+        'full_name' => $_SESSION['full_name'] ?? 'User',
+        'email' => $_SESSION['email'] ?? '',
+        'phone' => '',
+        'address' => '',
+        'bio' => '',
+        'gender' => '',
+        'profile_picture' => 'default_avatar.png'
+    ];
+}
 
 $stmt = $pdo->prepare("SELECT * FROM accounts WHERE user_id = ?");
 $stmt->execute([$user_id]);
@@ -52,12 +74,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email, $user_id]);
     }
 
-    $stmt = $pdo->prepare("UPDATE customer_details SET full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ? WHERE user_id = ?");
-    $stmt->execute([$full_name, $phone, $address, $gender, $bio, $profile_picture, $user_id]);
+    // Update details based on role
+    if ($role === 'Customer') {
+        $stmt = $pdo->prepare("UPDATE customer_details SET full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ? WHERE user_id = ?");
+        $stmt->execute([$full_name, $phone, $address, $gender, $bio, $profile_picture, $user_id]);
+    } elseif ($role === 'Staff') {
+        $stmt = $pdo->prepare("UPDATE staff_details SET full_name = ?, phone = ?, bio = ?, profile_picture = ? WHERE user_id = ?");
+        $stmt->execute([$full_name, $phone, $bio, $profile_picture, $user_id]);
+    } elseif ($role === 'Admin') {
+        $stmt = $pdo->prepare("UPDATE admin_details SET full_name = ?, profile_picture = ? WHERE user_id = ?");
+        $stmt->execute([$full_name, $profile_picture, $user_id]);
+    }
 
     $_SESSION['full_name'] = $full_name;
     $_SESSION['flash'] = ['type' => 'success', 'message' => 'Profile updated successfully!'];
-    redirect('customer/profile.php');
+    redirect('profile.php');
 }
 
 render('customer/profile', [

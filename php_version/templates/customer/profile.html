@@ -25,7 +25,7 @@
                         </label>
                     </div>
                     <h3 class="text-xl font-bold text-white">
-                        <?php echo $user['full_name']; ?>
+                        <?php echo $user['full_name'] ?? 'N/A'; ?>
                     </h3>
                     <p class="text-[10px] font-black text-gray-500 tracking-[0.2em] uppercase mt-1">
                         <?php echo $_SESSION['role']; ?> Access Level Code
@@ -36,10 +36,11 @@
                 </div>
             </div>
 
-            <div class="glass-light p-6 rounded-2xl border border-primary-500/20">
+            <div
+                class="glass-light p-6 rounded-2xl border border-primary-500/20 <?php echo $_SESSION['role'] === 'Admin' ? 'hidden' : ''; ?>">
                 <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-4">Account Bio</p>
                 <textarea name="bio" placeholder="WRITE YOUR BIOGRAPHY HERE..."
-                    class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white focus:border-primary-500 outline-none transition-all uppercase resize-none h-32"><?php echo $user['bio']; ?></textarea>
+                    class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white focus:border-primary-500 outline-none transition-all uppercase resize-none h-32"><?php echo $user['bio'] ?? ''; ?></textarea>
             </div>
         </div>
 
@@ -53,37 +54,39 @@
                     <div class="space-y-2">
                         <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest ml-4">Full
                             Legal Name</label>
-                        <input type="text" name="full_name" value="<?php echo $user['full_name']; ?>"
+                        <input type="text" name="full_name" value="<?php echo $user['full_name'] ?? ''; ?>"
                             class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:border-primary-500 outline-none transition-all uppercase">
                     </div>
                     <div class="space-y-2">
                         <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest ml-4">Email
                             Address</label>
-                        <input type="email" name="email" value="<?php echo $user['email']; ?>"
+                        <input type="email" name="email" value="<?php echo $user['email'] ?? ''; ?>"
                             class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:border-primary-500 outline-none transition-all uppercase">
                     </div>
-                    <div class="space-y-2">
+                    <div class="space-y-2 <?php echo $_SESSION['role'] === 'Admin' ? 'hidden' : ''; ?>">
                         <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest ml-4">Contact
                             Protocol (Phone)</label>
-                        <input type="text" name="phone" value="<?php echo $user['phone']; ?>"
+                        <input type="text" name="phone" value="<?php echo $user['phone'] ?? ''; ?>"
                             class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:border-primary-500 outline-none transition-all uppercase">
                     </div>
-                    <div class="space-y-2">
+                    <div class="space-y-2 <?php echo $_SESSION['role'] !== 'Customer' ? 'hidden' : ''; ?>">
                         <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest ml-4">Gender
                             Identification</label>
                         <select name="gender"
                             class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:border-primary-500 outline-none transition-all uppercase">
-                            <option value="Male" <?php echo $user['gender']=='Male' ? 'selected' : '' ; ?>>Male</option>
-                            <option value="Female" <?php echo $user['gender']=='Female' ? 'selected' : '' ; ?>>Female
+                            <option value="Male" <?php echo ($user['gender'] ?? '' )=='Male' ? 'selected' : '' ; ?>>Male
+                            </option>
+                            <option value="Female" <?php echo ($user['gender'] ?? '' )=='Female' ? 'selected' : '' ; ?>
+                                >Female
                             </option>
                         </select>
                     </div>
                 </div>
 
-                <div class="space-y-2 pt-4">
+                <div class="space-y-2 pt-4 <?php echo $_SESSION['role'] !== 'Customer' ? 'hidden' : ''; ?>">
                     <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest ml-4">Physical
                         Node (Address)</label>
-                    <input type="text" name="address" value="<?php echo $user['address']; ?>"
+                    <input type="text" name="address" value="<?php echo $user['address'] ?? ''; ?>"
                         class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:border-primary-500 outline-none transition-all uppercase">
                 </div>
 
