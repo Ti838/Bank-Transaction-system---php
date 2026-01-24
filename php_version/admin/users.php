@@ -67,12 +67,12 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$target_id]);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'User and related data deleted.'];
         }
+        redirect('users.php');
     }
-    redirect('admin/users.php');
 }
 
 $stmt = $pdo->query("
-    SELECT u.*, r.name as role_name, a.status as account_status, a.account_number,
+    SELECT u.*, r.name as role_name, a.status as account_status, a.account_number, a.balance,
            COALESCE(ad.full_name, sd.full_name, cd.full_name) as full_name
     FROM users u 
     JOIN roles r ON u.role_id = r.id 

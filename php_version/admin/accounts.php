@@ -16,7 +16,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         $stmt->execute([$acc_id]);
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Account activated successfully.'];
     }
-    redirect('admin/accounts.php');
+    redirect('accounts.php');
 }
 
 $stmt = $pdo->query("

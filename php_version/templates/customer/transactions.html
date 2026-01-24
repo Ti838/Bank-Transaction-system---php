@@ -59,6 +59,12 @@
                             class="py-6 px-8 text-right font-black text-sm <?php echo ($t['transaction_type'] == 'Deposit' || ($t['transaction_type'] == 'Transfer' && $t['to_account_id'] == $account['id'])) ? 'text-success-500' : 'text-red-500'; ?>">
                             ৳
                             <?php echo number_format($t['amount'], 2); ?>
+                            <div class="mt-2 text-right">
+                                <a href="receipt.php?id=<?php echo $t['id']; ?>"
+                                    class="text-[8px] font-black text-primary-400 uppercase tracking-widest hover:underline">
+                                    <i class="fas fa-file-invoice mr-1"></i>Receipt
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>

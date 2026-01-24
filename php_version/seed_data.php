@@ -29,6 +29,11 @@ try {
     $admin_id = $pdo->lastInsertId();
     $pdo->prepare("INSERT INTO admin_details (user_id, full_name) VALUES (?, 'System Administrator')")->execute([$admin_id]);
     $pdo->prepare("INSERT INTO accounts (account_number, user_id, account_type, balance, status) VALUES ('2020000001', ?, 'Savings', 1000000000.00, 'Active')")->execute([$admin_id]);
+    $admin_acc_id = $pdo->lastInsertId();
+
+    // Record initial liquidity deposit
+    $pdo->prepare("INSERT INTO transactions (transaction_type, amount, to_account_id, status, description) VALUES ('Deposit', 1000000000.00, ?, 'Success', 'Initial Bank Liquidity Injection')")->execute([$admin_acc_id]);
+
     echo "[SUCCESS] Admin seeded - Balance: 100 Crore BDT (Bank Liquid Capital)\n";
 
     // 3. Seed Staff
@@ -51,3 +56,4 @@ try {
 } catch (Exception $e) {
     echo "\n[ERROR] Seeding failed: " . $e->getMessage() . "</pre>";
 }
+?>

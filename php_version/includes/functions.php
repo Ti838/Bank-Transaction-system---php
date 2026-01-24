@@ -129,7 +129,7 @@ function process_withdrawal($account_id, $amount, $description = 'Withdrawal')
 function process_transfer($from_account_id, $to_account_number, $amount, $description = 'Transfer')
 {
     global $pdo;
-    $fee = 10.00;
+    $fee = floatval(get_system_settings('transfer_fee') ?: 10.00);
     $total_deduction = $amount + $fee;
 
     try {
@@ -166,7 +166,7 @@ function process_transfer($from_account_id, $to_account_number, $amount, $descri
         $stmt->execute([$amount, $fee, $from_account_id, $dest['id'], $description]);
 
         // Notifications
-        create_notification($src['user_id'], "Transferred ৳" . number_format($amount, 2) . " (Fee: ৳10.00) to $to_account_number", "Success");
+        create_notification($src['user_id'], "Transferred ৳" . number_format($amount, 2) . " (Fee: ৳" . number_format($fee, 2) . ") to $to_account_number", "Success");
         create_notification($dest['user_id'], "Received ৳" . number_format($amount, 2) . " from " . $src['account_number'], "Success");
 
         $pdo->commit();

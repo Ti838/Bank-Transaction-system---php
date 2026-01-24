@@ -56,54 +56,62 @@
                 </thead>
                 <tbody class="divide-y divide-primary-500/5">
                     <?php if ($transactions): ?>
-                        <?php foreach ($transactions as $t): ?>
-                            <tr class="hover:bg-primary-500/5 transition-colors group">
-                                <td class="py-6 px-8">
-                                    <p class="text-[10px] font-mono text-white font-black">
-                                        <?php echo date('H:i:s', strtotime($t['created_at'])); ?>
-                                    </p>
-                                    <p class="text-[8px] text-gray-600 font-bold uppercase tracking-tighter">Delta Station</p>
-                                </td>
-                                <td class="py-6 px-8">
-                                    <p class="text-[10px] font-black text-white uppercase">
-                                        <?php echo $t['from_name'] ?: ($t['to_name'] ?: 'SYSTEM_CORE'); ?>
-                                    </p>
-                                    <p class="text-[9px] text-gray-500 font-mono font-bold">
-                                        <?php echo $t['from_acc'] ?: $t['to_acc']; ?>
-                                    </p>
-                                </td>
-                                <td class="py-6 px-8 text-center">
-                                    <span
-                                        class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border <?php echo $t['transaction_type'] == 'Deposit' ? 'bg-success-500/10 text-success-500 border-success-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'; ?>">
-                                        <?php echo $t['transaction_type']; ?>
-                                    </span>
-                                </td>
-                                <td class="py-6 px-8 text-right">
-                                    <p class="text-sm font-black text-white">৳
-                                        <?php echo number_format($t['amount'], 2); ?>
-                                    </p>
-                                </td>
-                                <td class="py-6 px-8 text-center">
-                                    <div class="flex justify-center items-center space-x-2">
-                                        <div
-                                            class="w-1.5 h-1.5 rounded-full <?php echo $t['status'] == 'Success' ? 'bg-success-500' : 'bg-red-500'; ?>">
-                                        </div>
-                                        <span
-                                            class="text-[9px] font-black uppercase tracking-widest <?php echo $t['status'] == 'Success' ? 'text-success-400' : 'text-red-400'; ?>">
-                                            <?php echo $t['status']; ?>
-                                        </span>
+                    <?php foreach ($transactions as $t): ?>
+                    <tr class="hover:bg-primary-500/5 transition-colors group">
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-mono text-white font-black">
+                                <?php echo date('H:i:s', strtotime($t['created_at'])); ?>
+                            </p>
+                            <p class="text-[8px] text-gray-600 font-bold uppercase tracking-tighter">Delta Station</p>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-black text-white uppercase">
+                                <?php echo $t['from_name'] ?: ($t['to_name'] ?: 'SYSTEM_CORE'); ?>
+                            </p>
+                            <p class="text-[9px] text-gray-500 font-mono font-bold">
+                                <?php echo $t['from_acc'] ?: $t['to_acc']; ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8 text-center">
+                            <span
+                                class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border <?php echo $t['transaction_type'] == 'Deposit' ? 'bg-success-500/10 text-success-500 border-success-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'; ?>">
+                                <?php echo $t['transaction_type']; ?>
+                            </span>
+                        </td>
+                        <td class="py-6 px-8 text-right">
+                            <p class="text-sm font-black text-white">৳
+                                <?php echo number_format($t['amount'], 2); ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8 text-center">
+                            <div class="flex flex-col items-center space-y-2">
+                                <div class="flex justify-center items-center space-x-2">
+                                    <div
+                                        class="w-1.5 h-1.5 rounded-full <?php echo $t['status'] == 'Success' ? 'bg-success-500' : 'bg-red-500'; ?>">
                                     </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                                    <span
+                                        class="text-[9px] font-black uppercase tracking-widest <?php echo $t['status'] == 'Success' ? 'text-success-400' : 'text-red-400'; ?>">
+                                        <?php echo $t['status']; ?>
+                                    </span>
+                                </div>
+                                <?php if ($t['status'] == 'Success'): ?>
+                                <a href="../customer/receipt.php?id=<?php echo $t['id']; ?>"
+                                    class="text-[8px] font-black text-primary-400 uppercase tracking-widest hover:underline">
+                                    <i class="fas fa-file-invoice mr-1 text-[7px]"></i>Receipt
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="py-24 text-center">
-                                <i class="fas fa-satellite-dish text-4xl text-gray-800 mb-4 block"></i>
-                                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Temporal
-                                    Manifests Found for This Cycle</p>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" class="py-24 text-center">
+                            <i class="fas fa-satellite-dish text-4xl text-gray-800 mb-4 block"></i>
+                            <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Temporal
+                                Manifests Found for This Cycle</p>
+                        </td>
+                    </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -148,8 +156,8 @@
             background: #eee !important;
         }
 
-        .divide-primary-500\/5 {
-            divide-color: #eee !important;
+        .divide-primary-500\/5>*+* {
+            border-color: #eee !important;
         }
     }
 </style>

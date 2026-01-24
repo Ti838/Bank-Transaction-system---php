@@ -27,6 +27,16 @@ try {
             ('maintenance_mode', '0'), 
             ('currency_symbol', '৳')");
      }
+
+     // AUTO-MIGRATION: Ensure nominee columns exist in customer_details
+     $stmt = $pdo->query("SHOW COLUMNS FROM customer_details LIKE 'nominee_name'");
+     if (!$stmt->fetch()) {
+          $pdo->exec("ALTER TABLE customer_details ADD COLUMN nominee_name VARCHAR(100)");
+     }
+     $stmt = $pdo->query("SHOW COLUMNS FROM customer_details LIKE 'nominee_relationship'");
+     if (!$stmt->fetch()) {
+          $pdo->exec("ALTER TABLE customer_details ADD COLUMN nominee_relationship VARCHAR(50)");
+     }
 } catch (\PDOException $e) {
      throw new \PDOException($e->getMessage(), (int) $e->getCode());
 }

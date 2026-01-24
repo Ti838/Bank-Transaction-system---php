@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $stmt->execute([$full_name, $role_id, $email, $hashed_password, $gender]);
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'New staff member created successfully.'];
     }
-    redirect('admin/staff.php');
+    redirect('staff.php');
 }
 
 $stmt = $pdo->query("SELECT u.*, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'Staff' ORDER BY u.created_at DESC");

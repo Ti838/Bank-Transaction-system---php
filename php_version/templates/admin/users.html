@@ -30,6 +30,8 @@
                             Level</th>
                         <th class="py-6 px-8 border-b border-primary-500/10 border-r border-primary-500/5">Account
                             Status</th>
+                        <th class="py-6 px-8 border-b border-primary-500/10 border-r border-primary-500/5">Liquidity
+                        </th>
                         <th class="py-6 px-8 border-b border-primary-500/10 text-center">Protocol Actions</th>
                     </tr>
                 </thead>
@@ -45,6 +47,10 @@
                                 <div>
                                     <p class="text-sm font-black text-white uppercase">
                                         <?php echo $u['full_name']; ?>
+                                        <span
+                                            class="ml-2 text-[9px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400">ID:
+                                            <?php echo $u['id']; ?>
+                                        </span>
                                     </p>
                                     <p class="text-[10px] text-gray-500 font-bold">
                                         <?php echo $u['email']; ?>
@@ -62,6 +68,11 @@
                             <?php else: ?>
                             <span class="text-[9px] font-black text-gray-600 uppercase">NO ACCOUNT</span>
                             <?php endif; ?>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-sm font-black text-white">
+                                <?php echo isset($u['balance']) ? '৳' . number_format($u['balance'], 2) : '---'; ?>
+                            </p>
                         </td>
                         <td class="py-6 px-8">
                             <div

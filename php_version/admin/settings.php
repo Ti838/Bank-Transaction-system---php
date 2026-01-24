@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         update_system_setting($key, $value);
     }
     $_SESSION['flash'] = ['type' => 'success', 'message' => 'Settings updated successfully!'];
-    redirect('admin/settings.php');
+    redirect('settings.php');
 }
 
 $settings = get_system_settings();

@@ -107,7 +107,10 @@
                         </td>
                         <td class="py-6 px-8">
                             <p class="text-[10px] font-black text-white uppercase">
-                                <?php echo $t['transaction_type']; ?>
+                                <?php echo $t['from_name'] ?: ($t['to_name'] ?: 'SYSTEM_RESERVE'); ?>
+                            </p>
+                            <p class="text-[9px] text-gray-500 font-mono italic">
+                                <?php echo $t['from_acc'] ?: $t['to_acc']; ?>
                             </p>
                         </td>
                         <td class="py-6 px-8">

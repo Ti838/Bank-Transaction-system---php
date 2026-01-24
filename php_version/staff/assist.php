@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $_SESSION['flash'] = ['type' => $result['success'] ? 'success' : 'danger', 'message' => $result['message']];
             if ($result['success']) {
-                redirect('staff/dashboard.php');
+                redirect('dashboard.php');
             }
         }
     }

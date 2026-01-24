@@ -25,70 +25,82 @@
                 </thead>
                 <tbody class="divide-y divide-primary-500/5">
                     <?php if ($transactions): ?>
-                        <?php foreach ($transactions as $t): ?>
-                            <tr class="hover:bg-primary-500/5 transition-colors group">
-                                <td class="py-6 px-8">
-                                    <p class="text-[10px] font-black text-white uppercase">
-                                        <?php echo date('d M Y', strtotime($t['created_at'])); ?>
-                                    </p>
-                                    <p class="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">
-                                        <?php echo date('H:i:s', strtotime($t['created_at'])); ?> UTC
-                                    </p>
-                                </td>
-                                <td class="py-6 px-8 text-center">
-                                    <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border <?php
+                    <?php foreach ($transactions as $t): ?>
+                    <tr class="hover:bg-primary-500/5 transition-colors group">
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-black text-white uppercase">
+                                <?php echo date('d M Y', strtotime($t['created_at'])); ?>
+                            </p>
+                            <p class="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">
+                                <?php echo date('H:i:s', strtotime($t['created_at'])); ?> UTC
+                            </p>
+                        </td>
+                        <td class="py-6 px-8 text-center">
+                            <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border <?php
                                     echo $t['transaction_type'] == 'Deposit' ? 'bg-success-500/10 text-success-500 border-success-500/20' :
                                         ($t['transaction_type'] == 'Withdrawal' ? 'bg-red-400/10 text-red-400 border-red-400/20' : 'bg-primary-500/10 text-primary-500 border-primary-500/20');
                                     ?>">
-                                        <?php echo $t['transaction_type']; ?>
-                                    </span>
-                                </td>
-                                <td class="py-6 px-8">
-                                    <p
-                                        class="text-[10px] font-mono text-gray-500 group-hover:text-primary-400 transition-colors uppercase font-bold">
-                                        <?php echo $t['from_acc'] ?: '<span class="text-gray-700 italic">EXTERNAL</span>'; ?>
-                                    </p>
-                                </td>
-                                <td class="py-6 px-8">
-                                    <p
-                                        class="text-[10px] font-mono text-gray-500 group-hover:text-primary-400 transition-colors uppercase font-bold">
-                                        <?php echo $t['to_acc'] ?: '<span class="text-gray-700 italic">EXTERNAL</span>'; ?>
-                                    </p>
-                                </td>
-                                <td class="py-6 px-8 text-right">
-                                    <p class="text-sm font-black text-white">৳
-                                        <?php echo number_format($t['amount'], 2); ?>
-                                    </p>
-                                    <?php if ($t['fee'] > 0): ?>
-                                        <p class="text-[9px] font-bold text-gold-400 tracking-tighter uppercase">TAX:
-                                            ৳
-                                            <?php echo number_format($t['fee'], 2); ?>
-                                        </p>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="py-6 px-8">
-                                    <div class="flex justify-center">
-                                        <div class="flex items-center space-x-2">
-                                            <div
-                                                class="w-1.5 h-1.5 rounded-full <?php echo $t['status'] == 'Success' ? 'bg-success-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,44,44,0.6)]'; ?>">
-                                            </div>
-                                            <span
-                                                class="text-[9px] font-black uppercase tracking-[0.2em] <?php echo $t['status'] == 'Success' ? 'text-success-500' : 'text-red-500'; ?>">
-                                                <?php echo $t['status']; ?>
-                                            </span>
-                                        </div>
+                                <?php echo $t['transaction_type']; ?>
+                            </span>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-black text-white uppercase">
+                                <?php echo $t['from_name'] ?: 'SYSTEM'; ?>
+                            </p>
+                            <p
+                                class="text-[9px] font-mono text-gray-600 group-hover:text-primary-400 transition-colors uppercase font-bold">
+                                <?php echo $t['from_acc'] ?: 'RESERVE'; ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] font-black text-white uppercase">
+                                <?php echo $t['to_name'] ?: 'SYSTEM'; ?>
+                            </p>
+                            <p
+                                class="text-[9px] font-mono text-gray-600 group-hover:text-primary-400 transition-colors uppercase font-bold">
+                                <?php echo $t['to_acc'] ?: 'RESERVE'; ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8 text-right">
+                            <p class="text-sm font-black text-white">৳
+                                <?php echo number_format($t['amount'], 2); ?>
+                            </p>
+                            <?php if ($t['fee'] > 0): ?>
+                            <p class="text-[9px] font-bold text-gold-400 tracking-tighter uppercase">TAX:
+                                ৳
+                                <?php echo number_format($t['fee'], 2); ?>
+                            </p>
+                            <?php endif; ?>
+                        </td>
+                        <td class="py-6 px-8">
+                            <div class="flex justify-center flex-col items-center space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <div
+                                        class="w-1.5 h-1.5 rounded-full <?php echo $t['status'] == 'Success' ? 'bg-success-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,44,44,0.6)]'; ?>">
                                     </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                                    <span
+                                        class="text-[9px] font-black uppercase tracking-[0.2em] <?php echo $t['status'] == 'Success' ? 'text-success-500' : 'text-red-500'; ?>">
+                                        <?php echo $t['status']; ?>
+                                    </span>
+                                </div>
+                                <?php if ($t['status'] == 'Success'): ?>
+                                <a href="../customer/receipt.php?id=<?php echo $t['id']; ?>"
+                                    class="text-[8px] font-black text-primary-400 uppercase tracking-widest hover:underline">
+                                    <i class="fas fa-file-invoice mr-1"></i>Receipt
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="py-24 text-center">
-                                <i class="fas fa-barcode text-4xl text-gray-800 mb-4 block"></i>
-                                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Temporal
-                                    Records Found in Nexus</p>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="py-24 text-center">
+                            <i class="fas fa-barcode text-4xl text-gray-800 mb-4 block"></i>
+                            <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Temporal
+                                Records Found in Nexus</p>
+                        </td>
+                    </tr>
                     <?php endif; ?>
                 </tbody>
             </table>

@@ -68,6 +68,8 @@ CREATE TABLE customer_details (
     address VARCHAR(200),
     bio TEXT,
     profile_picture VARCHAR(200),
+    nominee_name VARCHAR(100),
+    nominee_relationship VARCHAR(50),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

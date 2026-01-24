@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = process_transfer($account['id'], $to_account, $amount, $description);
         $_SESSION['flash'] = ['type' => $result['success'] ? 'success' : 'danger', 'message' => $result['message']];
         if ($result['success']) {
-            redirect('customer/dashboard.php');
+            redirect('receipt.php?id=' . $pdo->lastInsertId());
         }
     }
 }

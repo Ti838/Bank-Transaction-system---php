@@ -25,7 +25,9 @@ if (!$user) {
         'address' => '',
         'bio' => '',
         'gender' => '',
-        'profile_picture' => 'default_avatar.png'
+        'profile_picture' => 'default_avatar.png',
+        'nominee_name' => '',
+        'nominee_relationship' => ''
     ];
 }
 
@@ -40,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'] ?? $user['address'];
     $gender = $_POST['gender'] ?? $user['gender'];
     $bio = $_POST['bio'] ?? $user['bio'];
+    $nominee_name = $_POST['nominee_name'] ?? ($user['nominee_name'] ?? '');
+    $nominee_relationship = $_POST['nominee_relationship'] ?? ($user['nominee_relationship'] ?? '');
 
     $profile_picture = $user['profile_picture'];
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
@@ -64,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($password)) {
         if (strlen($password) < 4) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Password too short (min 4 chars).'];
-            redirect('customer/profile.php');
+            redirect('profile.php');
         }
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("UPDATE users SET email = ?, password_hash = ? WHERE id = ?");
@@ -76,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update details based on role
     if ($role === 'Customer') {
-        $stmt = $pdo->prepare("UPDATE customer_details SET full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ? WHERE user_id = ?");
-        $stmt->execute([$full_name, $phone, $address, $gender, $bio, $profile_picture, $user_id]);
+        $stmt = $pdo->prepare("UPDATE customer_details SET full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ?, nominee_name = ?, nominee_relationship = ? WHERE user_id = ?");
+        $stmt->execute([$full_name, $phone, $address, $gender, $bio, $profile_picture, $nominee_name, $nominee_relationship, $user_id]);
     } elseif ($role === 'Staff') {
         $stmt = $pdo->prepare("UPDATE staff_details SET full_name = ?, phone = ?, bio = ?, profile_picture = ? WHERE user_id = ?");
         $stmt->execute([$full_name, $phone, $bio, $profile_picture, $user_id]);
