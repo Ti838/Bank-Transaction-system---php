@@ -46,21 +46,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nominee_relationship = $_POST['nominee_relationship'] ?? ($user['nominee_relationship'] ?? '');
 
     $profile_picture = $user['profile_picture'];
-    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-        $allowed_exts = ['png', 'jpg', 'jpeg', 'gif'];
-        $file_name = $_FILES['profile_picture']['name'];
-        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+            $allowed_exts = ['png', 'jpg', 'jpeg', 'gif'];
+            $file_name = $_FILES['profile_picture']['name'];
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        if (in_array($file_ext, $allowed_exts)) {
-            $new_name = uniqid('profile_', true) . '.' . $file_ext;
-            $upload_dir = '../static/uploads/profiles/';
-            if (!is_dir($upload_dir))
-                mkdir($upload_dir, 0777, true);
+            if (in_array($file_ext, $allowed_exts)) {
+                $new_name = uniqid('profile_', true) . '.' . $file_ext;
+                $upload_dir = __DIR__ . '/../static/uploads/profiles/';
 
-            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $upload_dir . $new_name)) {
-                $profile_picture = $new_name;
-                $_SESSION['profile_picture'] = $profile_picture;
+                if (!is_dir($upload_dir)) {
+                    if (!mkdir($upload_dir, 0777, true)) {
+                        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Failed to create upload directory.'];
+                        redirect('profile.php');
+                    }
+                }
+
+                if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $upload_dir . $new_name)) {
+                    $profile_picture = $new_name;
+                    $_SESSION['profile_picture'] = $profile_picture;
+                } else {
+                    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Failed to save uploaded file. Check permissions.'];
+                }
+            } else {
+                $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Invalid file format. Allowed: PNG, JPG, JPEG, GIF.'];
             }
+        } else {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Upload error code: ' . $_FILES['profile_picture']['error']];
         }
     }
 
