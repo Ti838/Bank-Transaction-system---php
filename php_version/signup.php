@@ -12,6 +12,7 @@ if (is_logged_in()) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = $_POST['full_name'] ?? '';
     $usertype = $_POST['usertype'] ?? 'Customer';
+    $account_type = $_POST['account_type'] ?? 'Savings';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $gender = $_POST['gender'] ?? '';
@@ -39,27 +40,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $role = $stmt->fetch();
         }
 
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO users (role_id, email, password_hash) VALUES (?, ?, ?)");
-        $stmt->execute([$role['id'], $email, $hashed_password]);
-        $user_id = $pdo->lastInsertId();
+        $hashed_password = $password; // Plain text as requested
 
-        if ($role_name === 'Customer') {
-            $stmt = $pdo->prepare("INSERT INTO customer_details (user_id, full_name, gender, phone, address, bio) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$user_id, $full_name, $gender, $phone, $address, $bio]);
-        } elseif ($role_name === 'Staff') {
-            $stmt = $pdo->prepare("INSERT INTO staff_details (user_id, full_name, phone, bio) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$user_id, $full_name, $phone, $bio]);
-        } elseif ($role_name === 'Admin') {
-            $stmt = $pdo->prepare("INSERT INTO admin_details (user_id, full_name) VALUES (?, ?)");
-            $stmt->execute([$user_id, $full_name]);
+        // Handle KYC Upload
+        $kyc_document = null;
+        if (isset($_FILES['kyc_document']) && $_FILES['kyc_document']['error'] === UPLOAD_ERR_OK) {
+            $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
+            $ext = strtolower(pathinfo($_FILES['kyc_document']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed)) {
+                $new_name = 'kyc_' . uniqid() . '.' . $ext;
+                $dest = 'static/uploads/kyc/';
+                if (!is_dir($dest))
+                    mkdir($dest, 0777, true);
+                if (move_uploaded_file($_FILES['kyc_document']['tmp_name'], $dest . $new_name)) {
+                    $kyc_document = $new_name;
+                }
+            }
         }
 
+        // Insert all data into users table
+        $stmt = $pdo->prepare("INSERT INTO users (role_id, email, password_hash, full_name, phone, address, bio, gender, kyc_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$role['id'], $email, $hashed_password, $full_name, $phone, $address, $bio, $gender, $kyc_document]);
+        $user_id = $pdo->lastInsertId();
+
+        // Create Default Account for all users
         if ($role_name === 'Customer' || $role_name === 'Admin' || $role_name === 'Staff') {
             $account_number = generate_account_number();
             $status = ($role_name === 'Customer') ? 'Pending' : 'Active';
-            $stmt = $pdo->prepare("INSERT INTO accounts (account_number, user_id, account_type, balance, status) VALUES (?, ?, 'Savings', 0.00, ?)");
-            $stmt->execute([$account_number, $user_id, $status]);
+
+            // For non-customers (staff/admin), force Savings to keep it simple, or allow choice. 
+            // Let's allow choice as per UI.
+
+            $stmt = $pdo->prepare("INSERT INTO accounts (account_number, user_id, account_type, balance, status) VALUES (?, ?, ?, 0.00, ?)");
+            $stmt->execute([$account_number, $user_id, $account_type, $status]);
 
             if ($status === 'Pending') {
                 create_notification($user_id, "Welcome to Trust Mora Bank! Your account $account_number is currently pending approval.", "Info");

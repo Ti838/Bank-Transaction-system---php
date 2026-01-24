@@ -98,9 +98,24 @@
         }
 
         body.light-theme .bg-slate-900\/50,
-        body.light-theme .bg-slate-900 {
-            background: rgba(255, 255, 255, 0.5) !important;
+        body.light-theme .bg-slate-900,
+        body.light-theme .bg-slate-900\/80,
+        body.light-theme .bg-slate-900\/40,
+        body.light-theme .bg-slate-950\/50,
+        body.light-theme .bg-slate-950 {
+            background: rgba(255, 255, 255, 0.7) !important;
             color: #0f172a !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .text-indigo-200 {
+            color: #4f46e5 !important;
+            /* Indigo-600 */
+            opacity: 1 !important;
+        }
+
+        body.light-theme .bg-gradient-to-br {
+            /* Adjust gradients if needed, or keep them as accent headers */
         }
 
         @media print {

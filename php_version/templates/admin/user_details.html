@@ -1,0 +1,223 @@
+<section class="max-w-7xl mx-auto py-12 px-6">
+    <div class="mb-10 flex justify-between items-end border-b border-primary-500/10 pb-6">
+        <div>
+            <h1 class="text-4xl font-black gradient-text tracking-tighter uppercase">Entity Profile</h1>
+            <p class="text-gray-500 font-bold text-[10px] tracking-[0.2em] uppercase">Detailed Subject Analysis</p>
+        </div>
+        <button onclick="history.back()"
+            class="text-[10px] font-black text-primary-400 uppercase tracking-widest hover:underline"><i
+                class="fas fa-chevron-left mr-2"></i>Back to List</button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Identity Card -->
+        <div class="lg:col-span-1 space-y-8">
+            <div
+                class="glass-light p-8 rounded-[2rem] border border-primary-500/20 text-center relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="w-32 h-32 mx-auto rounded-full border-4 border-primary-500/30 overflow-hidden mb-6 p-1">
+                        <img src="../static/uploads/profiles/<?php echo $u['profile_picture'] ?? 'default_avatar.png'; ?>"
+                            class="w-full h-full rounded-full object-cover">
+                    </div>
+                    <h2 class="text-2xl font-black text-white uppercase">
+                        <?php echo $u['full_name']; ?>
+                    </h2>
+                    <p class="text-xs font-bold text-primary-400 uppercase tracking-widest mb-4">
+                        <?php echo $u['role_name']; ?> Details
+                    </p>
+
+                    <div class="flex justify-center mb-6">
+                        <span
+                            class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border <?php echo $u['account_status'] == 'Active' ? 'bg-success-500/10 text-success-500 border-success-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'; ?>">
+                            <?php echo $u['account_status'] ?? 'NO ACCOUNT'; ?>
+                        </span>
+                    </div>
+
+                    <div class="text-left space-y-4 border-t border-primary-500/10 pt-6">
+                        <div>
+                            <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Email</p>
+                            <p class="text-sm font-bold text-white">
+                                <?php echo $u['email']; ?>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Phone</p>
+                            <p class="text-sm font-bold text-white">
+                                <?php echo $u['phone']; ?>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Gender</p>
+                            <p class="text-sm font-bold text-white">
+                                <?php echo $u['gender']; ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KYC Document -->
+            <div class="glass-light p-8 rounded-[2rem] border border-gold-400/20">
+                <h3 class="text-xs font-black text-gold-400 uppercase tracking-widest mb-6">Verification Document</h3>
+                <?php if (!empty($u['kyc_document'])): ?>
+                <a href="../static/uploads/kyc/<?php echo $u['kyc_document']; ?>" target="_blank"
+                    class="block w-full h-48 bg-black/50 rounded-xl flex flex-col items-center justify-center hover:bg-black/70 transition-all border border-gold-400/10 group">
+                    <i
+                        class="fas fa-file-contract text-4xl text-gold-400 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-black text-gray-400 uppercase">Click to Inspect</span>
+                </a>
+                <?php else: ?>
+                <div
+                    class="h-48 bg-red-500/5 rounded-xl flex flex-col items-center justify-center border border-red-500/10">
+                    <i class="fas fa-exclamation-circle text-3xl text-red-400 mb-2"></i>
+                    <span class="text-[10px] font-black text-red-400 uppercase">No Document Provided</span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Extended Info -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="glass-light p-8 rounded-[2rem] border border-primary-500/10">
+                <h3
+                    class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-primary-500 pl-3">
+                    Physical & Bio Data</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Physical Address
+                        </p>
+                        <p class="text-sm font-bold text-white leading-relaxed">
+                            <?php echo $u['address'] ?: 'N/A'; ?>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Biography</p>
+                        <p class="text-xs font-medium text-gray-400 leading-relaxed italic">"
+                            <?php echo $u['bio'] ?: 'No bio available'; ?>"
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Nominee Name</p>
+                        <p class="text-sm font-bold text-white">
+                            <?php echo $u['nominee_name'] ?: 'N/A'; ?>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Nominee
+                            Relationship</p>
+                        <p class="text-sm font-bold text-white">
+                            <?php echo $u['nominee_relationship'] ?: 'N/A'; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Snapshot -->
+            <div class="glass-light p-8 rounded-[2rem] border border-success-500/10">
+                <h3
+                    class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-success-500 pl-3">
+                    Financial Nexus</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <div class="p-4 bg-slate-900/50 rounded-xl border border-white/5">
+                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Account Number</p>
+                        <p class="text-lg font-mono font-bold text-white">
+                            <?php echo $u['account_number'] ?: '---'; ?>
+                        </p>
+                    </div>
+                    <div class="p-4 bg-slate-900/50 rounded-xl border border-white/5">
+                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Balance</p>
+                        <p class="text-lg font-mono font-bold text-success-400">৳
+                            <?php echo number_format($u['balance'] ?? 0, 2); ?>
+                        </p>
+                    </div>
+                    <div class="p-4 bg-slate-900/50 rounded-xl border border-white/5">
+                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Schema Type</p>
+                        <p class="text-lg font-bold text-primary-400">
+                            <?php echo $u['account_type'] ?? 'Standard'; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Liquidity Control -->
+            <?php if($_SESSION['role'] === 'Admin'): ?>
+            <div class="glass-light p-8 rounded-[2rem] border border-primary-500/10 relative overflow-hidden">
+                <h3
+                    class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-primary-500 pl-3">
+                    Liquidity Injection Protocol</h3>
+
+                <form method="POST" class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label
+                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Amount
+                                (BDT)</label>
+                            <input type="number" name="amount" step="0.01" required placeholder="0.00"
+                                class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-primary-500 outline-none transition-all">
+                        </div>
+                        <div class="col-span-2">
+                            <label
+                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Reference
+                                Note</label>
+                            <input type="text" name="description" placeholder="Administrative Adjustment"
+                                class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-primary-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="submit" name="fund_action" value="deposit"
+                            class="py-3 bg-success-600/10 text-success-500 border border-success-600/20 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-success-600 hover:text-white transition-all flex items-center justify-center">
+                            <i class="fas fa-plus mr-2"></i> Inject (Deposit)
+                        </button>
+                        <button type="submit" name="fund_action" value="withdraw"
+                            class="py-3 bg-red-600/10 text-red-500 border border-red-600/20 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all flex items-center justify-center">
+                            <i class="fas fa-minus mr-2"></i> Extract (Debit)
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <?php endif; ?>
+
+            <!-- Recent Activity -->
+            <div class="glass-light p-8 rounded-[2rem] border border-primary-500/10">
+                <h3
+                    class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-gray-500 pl-3">
+                    Recent Protocol Activity</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead
+                            class="text-[9px] font-black text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <tr>
+                                <th class="pb-3">Time</th>
+                                <th class="pb-3">Type</th>
+                                <th class="pb-3 text-right">Amount</th>
+                                <th class="pb-3 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <?php foreach ($transactions as $t): ?>
+                            <tr>
+                                <td class="py-3 text-[10px] font-mono text-gray-400">
+                                    <?php echo date('d M, H:i', strtotime($t['created_at'])); ?>
+                                </td>
+                                <td class="py-3 text-[10px] font-bold text-white uppercase">
+                                    <?php echo $t['transaction_type']; ?>
+                                </td>
+                                <td class="py-3 text-[10px] font-mono font-bold text-right text-white">৳
+                                    <?php echo number_format($t['amount'], 2); ?>
+                                </td>
+                                <td class="py-3 text-center">
+                                    <span
+                                        class="text-[8px] font-black uppercase <?php echo $t['status'] == 'Success' ? 'text-success-500' : 'text-red-500'; ?>">
+                                        <?php echo $t['status']; ?>
+                                    </span>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

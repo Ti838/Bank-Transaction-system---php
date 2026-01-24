@@ -1,13 +1,9 @@
--- Trust Mora Bank - 
-
--- Create database
+-- 1. Create Database
 DROP DATABASE IF EXISTS securebank;
 CREATE DATABASE securebank;
-USE securebank; 
+USE securebank;
 
-
--- Table: Roles
-
+-- 2. Create Roles Table
 CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
@@ -16,66 +12,33 @@ CREATE TABLE roles (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Insert predefined roles
-INSERT INTO roles (name) VALUES
-('Admin'),
-('Staff'),
+-- 3. Insert Default Roles
+INSERT INTO roles (name) VALUES 
+('Admin'), 
+('Staff'), 
 ('Customer');
 
-
--- Table: Users (Core Authentication)
-
+-- 4. Create Users Table (Unified)
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role_id INT NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(1000) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    address VARCHAR(200),
+    bio TEXT,
+    profile_picture VARCHAR(200),
+    gender VARCHAR(10),
+    nominee_name VARCHAR(100),
+    nominee_relationship VARCHAR(50),
+    kyc_document VARCHAR(200),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
-
--- Table: Admin Details
-
-CREATE TABLE admin_details (
-    user_id INT PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    profile_picture VARCHAR(200),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-
--- Table: Staff Details
-
-CREATE TABLE staff_details (
-    user_id INT PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    bio TEXT,
-    profile_picture VARCHAR(200),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-
--- Table: Customer Details
-
-CREATE TABLE customer_details (
-    user_id INT PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    gender VARCHAR(10),
-    phone VARCHAR(20),
-    address VARCHAR(200),
-    bio TEXT,
-    profile_picture VARCHAR(200),
-    nominee_name VARCHAR(100),
-    nominee_relationship VARCHAR(50),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-
--- Table: Accounts
-
+-- 5. Create Accounts Table
 CREATE TABLE accounts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -88,9 +51,7 @@ CREATE TABLE accounts (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
--- Table: Transactions
-
+-- 6. Create Transactions Table
 CREATE TABLE transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_type VARCHAR(20) NOT NULL,
@@ -105,9 +66,7 @@ CREATE TABLE transactions (
     FOREIGN KEY (to_account_id) REFERENCES accounts(id) ON DELETE SET NULL
 );
 
-
--- Table: Notifications
-
+-- 7. Create Notifications Table
 CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -118,41 +77,24 @@ CREATE TABLE notifications (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
--- Table: Settings (System Configuration)
-
+-- 8. Create Settings Table
 CREATE TABLE IF NOT EXISTS settings (
     setting_key VARCHAR(50) PRIMARY KEY,
     setting_value TEXT
 );
 
--- Seed defaults settings
-INSERT IGNORE INTO settings (setting_key, setting_value) VALUES 
+-- 9. Insert Default Settings
+INSERT INTO settings (setting_key, setting_value) VALUES 
 ('bank_name', 'Trust Mora Bank'), 
 ('transfer_fee', '10.00'), 
 ('maintenance_mode', '0'), 
 ('currency_symbol', '৳');
 
+-- 10. Seed Data (System Admin & Reserve)
+-- Password for Admin is 'admin123' (hash: $2y$10$...)
+INSERT INTO users (role_id, email, password_hash, full_name, bio) VALUES 
+(1, 'admin@trustmora.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'Central Command');
 
--- Views
-
-CREATE VIEW user_roles_view AS
-SELECT u.id AS user_id, u.email, r.name AS role_name, r.description AS role_description, u.created_at
-FROM users u
-JOIN roles r ON u.role_id = r.id;
-
-CREATE VIEW view_customers AS
-SELECT u.id, cd.full_name, u.email, cd.gender, cd.phone, cd.address, u.created_at 
-FROM users u 
-JOIN customer_details cd ON u.id = cd.user_id;
-
-CREATE VIEW view_staff AS
-SELECT u.id, sd.full_name, u.email, sd.phone, u.created_at 
-FROM users u 
-JOIN staff_details sd ON u.id = sd.user_id;
-
-CREATE VIEW view_admins AS
-SELECT u.id, ad.full_name, u.email, u.created_at 
-FROM users u 
-JOIN admin_details ad ON u.id = ad.user_id;
-
+-- System Reserve Account (Must be ID 1 or account number 2020000001)
+INSERT INTO accounts (user_id, account_number, account_type, balance, status) VALUES 
+(1, '2020000001', 'Savings', 1000000000.00, 'Active');

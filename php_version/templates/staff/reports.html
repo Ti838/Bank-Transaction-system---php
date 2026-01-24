@@ -66,7 +66,19 @@
                         </td>
                         <td class="py-6 px-8">
                             <p class="text-[10px] font-black text-white uppercase">
-                                <?php echo $t['from_name'] ?: ($t['to_name'] ?: 'SYSTEM_CORE'); ?>
+                                <?php if($t['from_user_id']): ?>
+                                <a href="../admin/user_details.php?id=<?php echo $t['from_user_id']; ?>"
+                                    class="hover:text-primary-400 underline decoration-dotted">
+                                    <?php echo $t['from_name']; ?>
+                                </a>
+                                <?php elseif($t['to_user_id']): ?>
+                                <a href="../admin/user_details.php?id=<?php echo $t['to_user_id']; ?>"
+                                    class="hover:text-primary-400 underline decoration-dotted">
+                                    <?php echo $t['to_name']; ?>
+                                </a>
+                                <?php else: ?>
+                                SYSTEM_CORE
+                                <?php endif; ?>
                             </p>
                             <p class="text-[9px] text-gray-500 font-mono font-bold">
                                 <?php echo $t['from_acc'] ?: $t['to_acc']; ?>

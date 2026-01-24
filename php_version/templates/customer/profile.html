@@ -164,4 +164,23 @@
             </div>
         </div>
     </form>
+
+    <script>
+        // Profile Picture Preview
+        const fileInput = document.querySelector('input[name="profile_picture"]');
+        const previewImg = document.querySelector('img[alt="Profile Picture"]');
+
+        if (fileInput && previewImg) {
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
 </section>

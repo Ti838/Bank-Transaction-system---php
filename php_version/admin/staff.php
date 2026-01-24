@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $stmt->execute();
         $role_id = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare("INSERT INTO users (full_name, role_id, email, password_hash, gender, usertype) VALUES (?, ?, ?, ?, ?, 'Staff')");
+        $stmt = $pdo->prepare("INSERT INTO users (full_name, role_id, email, password_hash, gender) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$full_name, $role_id, $email, $hashed_password, $gender]);
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'New staff member created successfully.'];
     }

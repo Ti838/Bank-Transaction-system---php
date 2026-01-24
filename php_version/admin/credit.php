@@ -7,12 +7,9 @@ if (!$acc_id)
     die("Invalid Account ID.");
 
 $stmt = $pdo->prepare("
-    SELECT a.*, COALESCE(ad.full_name, sd.full_name, cd.full_name) as full_name 
+    SELECT a.*, u.full_name 
     FROM accounts a 
     JOIN users u ON a.user_id = u.id 
-    LEFT JOIN admin_details ad ON u.id = ad.user_id
-    LEFT JOIN staff_details sd ON u.id = sd.user_id
-    LEFT JOIN customer_details cd ON u.id = cd.user_id
     WHERE a.id = ?
 ");
 $stmt->execute([$acc_id]);

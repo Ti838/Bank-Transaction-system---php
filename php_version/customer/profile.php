@@ -5,14 +5,7 @@ require_login();
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['role'];
 
-// Map roles to their specific detail tables
-$details_table = 'customer_details';
-if ($role === 'Admin')
-    $details_table = 'admin_details';
-if ($role === 'Staff')
-    $details_table = 'staff_details';
-
-$stmt = $pdo->prepare("SELECT u.email, d.* FROM users u JOIN $details_table d ON u.id = d.user_id WHERE u.id = ?");
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
@@ -83,24 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Password too short (min 4 chars).'];
             redirect('profile.php');
         }
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users SET email = ?, password_hash = ? WHERE id = ?");
-        $stmt->execute([$email, $hashed_password, $user_id]);
-    } else {
-        $stmt = $pdo->prepare("UPDATE users SET email = ? WHERE id = ?");
-        $stmt->execute([$email, $user_id]);
-    }
+        $hashed_password = $password; // Plain text as requested
 
-    // Update details based on role
-    if ($role === 'Customer') {
-        $stmt = $pdo->prepare("UPDATE customer_details SET full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ?, nominee_name = ?, nominee_relationship = ? WHERE user_id = ?");
-        $stmt->execute([$full_name, $phone, $address, $gender, $bio, $profile_picture, $nominee_name, $nominee_relationship, $user_id]);
-    } elseif ($role === 'Staff') {
-        $stmt = $pdo->prepare("UPDATE staff_details SET full_name = ?, phone = ?, bio = ?, profile_picture = ? WHERE user_id = ?");
-        $stmt->execute([$full_name, $phone, $bio, $profile_picture, $user_id]);
-    } elseif ($role === 'Admin') {
-        $stmt = $pdo->prepare("UPDATE admin_details SET full_name = ?, profile_picture = ? WHERE user_id = ?");
-        $stmt->execute([$full_name, $profile_picture, $user_id]);
+        // Update users table with password
+        $stmt = $pdo->prepare("UPDATE users SET email = ?, password_hash = ?, full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ?, nominee_name = ?, nominee_relationship = ? WHERE id = ?");
+        $stmt->execute([$email, $hashed_password, $full_name, $phone, $address, $gender, $bio, $profile_picture, $nominee_name, $nominee_relationship, $user_id]);
+    } else {
+        // Update users table without password
+        $stmt = $pdo->prepare("UPDATE users SET email = ?, full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ?, nominee_name = ?, nominee_relationship = ? WHERE id = ?");
+        $stmt->execute([$email, $full_name, $phone, $address, $gender, $bio, $profile_picture, $nominee_name, $nominee_relationship, $user_id]);
     }
 
     $_SESSION['full_name'] = $full_name;

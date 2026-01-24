@@ -61,9 +61,12 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-8">
-            <div class="glass-light p-6 rounded-xl border border-primary-500/30 h-64 relative">
+            <div
+                class="glass-light p-6 rounded-xl border border-primary-500/30 min-h-[300px] h-auto relative flex flex-col">
                 <h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Transaction Volume</h3>
-                <canvas id="balanceChart"></canvas>
+                <div class="flex-grow w-full relative h-64">
+                    <canvas id="balanceChart" class="w-full h-full"></canvas>
+                </div>
             </div>
 
             <div class="glass-light p-6 rounded-xl border border-primary-500/30">

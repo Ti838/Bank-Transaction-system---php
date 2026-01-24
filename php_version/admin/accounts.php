@@ -20,12 +20,9 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 }
 
 $stmt = $pdo->query("
-    SELECT a.*, COALESCE(ad.full_name, sd.full_name, cd.full_name) as full_name, u.email 
+    SELECT a.*, u.full_name, u.email 
     FROM accounts a 
     JOIN users u ON a.user_id = u.id 
-    LEFT JOIN admin_details ad ON u.id = ad.user_id
-    LEFT JOIN staff_details sd ON u.id = sd.user_id
-    LEFT JOIN customer_details cd ON u.id = cd.user_id
     ORDER BY a.created_at DESC
 ");
 $accounts = $stmt->fetchAll();

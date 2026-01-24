@@ -51,4 +51,24 @@
             </button>
         </div>
     </form>
+
+    <!-- Global Broadcast System -->
+    <div class="mt-8 glass-light p-8 rounded-3xl border border-primary-500/20">
+        <h2 class="text-xl font-black gradient-text tracking-tighter uppercase mb-2">Global Broadcast System</h2>
+        <p
+            class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-primary-500/10 pb-4">
+            Transmit Alerts to All Active Nodes</p>
+
+        <form method="POST" class="space-y-4">
+            <textarea name="broadcast_message" rows="3" required
+                class="w-full bg-slate-900/50 border border-primary-500/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-primary-500 outline-none transition-all resize-none placeholder-gray-600"
+                placeholder="Type your alert message here..."></textarea>
+            <div class="flex justify-end">
+                <button type="submit"
+                    class="px-8 py-3 bg-red-600/20 text-red-400 border border-red-500/30 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all transform hover:scale-[1.02]">
+                    <i class="fas fa-bullhorn mr-2"></i> Transmit Broadcast
+                </button>
+            </div>
+        </form>
+    </div>
 </section>

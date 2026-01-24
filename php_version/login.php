@@ -31,20 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Incorrect CAPTCHA answer.";
     } else {
         $stmt = $pdo->prepare("
-            SELECT u.*, r.name as role_name, 
-                   COALESCE(ad.full_name, sd.full_name, cd.full_name) as full_name,
-                   COALESCE(ad.profile_picture, sd.profile_picture, cd.profile_picture) as profile_picture
+            SELECT u.*, r.name as role_name 
             FROM users u 
             JOIN roles r ON u.role_id = r.id 
-            LEFT JOIN admin_details ad ON u.id = ad.user_id
-            LEFT JOIN staff_details sd ON u.id = sd.user_id
-            LEFT JOIN customer_details cd ON u.id = cd.user_id
             WHERE u.email = ? OR u.id = ?
         ");
         $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && $password === $user['password_hash']) {
             $_SESSION['login_attempts'] = 0; // Reset on success
             unset($_SESSION['captcha_answer']);
 

@@ -24,6 +24,11 @@
             </button>
 
             <?php if (is_logged_in()): ?>
+                <!-- Currency Toggle -->
+                <button id="currency-toggle" aria-label="Toggle Currency"
+                    class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-success-400 font-bold text-sm h-10 w-10 flex items-center justify-center border border-transparent hover:border-white/10">
+                    ৳
+                </button>
                 <!-- Notification Bell -->
                 <div class="relative group" id="notification-wrapper">
                     <?php
@@ -63,9 +68,10 @@
                                     <div class="px-6 py-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
                                         <p class="text-[11px] text-white leading-relaxed mb-1"><?php echo $nn['message']; ?></p>
                                         <p class="text-[8px] text-gray-500 font-bold uppercase">
-                                            <?php echo date('d M, H:i', strtotime($nn['created_at'])); ?></p>
+                                            <?php echo date('d M, H:i', strtotime($nn['created_at'])); ?>
+                                        </p>
                                     </div>
-                                <?php
+                                    <?php
                                 endforeach;
                             else:
                                 ?>
@@ -199,6 +205,98 @@
             } else {
                 localStorage.setItem('theme', 'dark');
                 if (icon) icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+    }
+
+    // Currency Toggle System
+    const currencyToggle = document.getElementById('currency-toggle');
+    const exchangeRate = 0.0090; // 1 BDT = 0.0090 USD (approx 1 USD = 110.50 BDT)
+
+    if (currencyToggle) {
+        // Check saved preference
+        let currentCurrency = localStorage.getItem('currency') || 'BDT'; // Default BDT
+
+        function updateCurrencyDisplay() {
+            currencyToggle.innerText = currentCurrency === 'BDT' ? '৳' : '$';
+
+            // Find all text nodes that might contain money
+            // Strategy: Look for the currency symbol and valid number
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+
+            // We restart conversion from DOM state might cover previously converted values incorrectly if not tracked.
+            // Best approach for reliability without massive refactor: Reload page on toggle to let PHP render base values, then JS converts if needed.
+            // BUT user wants "click korle hobe" -> Instant.
+            // So we will target specific money containers or attempt a smart scan.
+
+            // Better: we assume the page LOADED in BDT (PHP Default).
+            // If switching to USD, we multiple by rate.
+            // If switching to BDT, we divide by rate (or reload).
+
+            // To be safe and simple: Reload page with a query param or cookie? 
+            // "click korle hobe" -> JS is best.
+
+            // Let's implement a text scanner that looks for '৳'
+
+            // NOTE: This is a complex feature to add retroactively perfectly. 
+            // We will try to target typical money classes or just reload for now if it's easier, but reloading isn't instant.
+
+            // Compromise: We will save to localStorage and Reload. This ensures all PHP calculations are consistent.
+            // Wait, PHP renders in ৳ always. So JS MUST do the conversion.
+
+            if (currentCurrency === 'USD') {
+                convertAllToUSD();
+                currencyToggle.classList.add('text-green-400');
+                currencyToggle.classList.remove('text-success-400');
+            } else {
+                // Revert to BDT? It's hard to revert accurately.
+                // Easiest way to revert is to reload the page to get fresh PHP data.
+                location.reload();
+            }
+        }
+
+        function convertAllToUSD() {
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while (node = walker.nextNode()) {
+                const text = node.nodeValue.trim();
+                // Match: '৳ 5,000.00' or '৳5000'
+                if (text.includes('৳')) {
+                    const numericPart = text.replace(/[৳,]/g, '').trim(); // Remove symbol and commas
+                    const val = parseFloat(numericPart);
+                    if (!isNaN(val)) {
+                        // Save original value in parent if not saved
+                        if (!node.parentNode.dataset.originalBdt) {
+                            node.parentNode.dataset.originalBdt = val;
+                        }
+
+                        // Convert
+                        const usdVal = (val * exchangeRate).toFixed(2);
+                        node.nodeValue = text.replace(/৳\s*[\d,]+\.?\d*/, '$ ' + usdVal);
+                    }
+                }
+            }
+        }
+
+        // On Load: If stored currency is USD, convert immediately
+        if (currentCurrency === 'USD') {
+            // We need a slight delay or ensure content is loaded. 
+            // Since script is at bottom, it should be fine.
+            setTimeout(updateCurrencyDisplay, 100);
+        } else {
+            currencyToggle.innerText = '৳';
+        }
+
+        currencyToggle.addEventListener('click', () => {
+            if (currentCurrency === 'BDT') {
+                currentCurrency = 'USD';
+                localStorage.setItem('currency', 'USD');
+                updateCurrencyDisplay();
+            } else {
+                currentCurrency = 'BDT';
+                localStorage.setItem('currency', 'BDT');
+                location.reload(); // Reload to get clean BDT values
             }
         });
     }

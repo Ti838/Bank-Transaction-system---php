@@ -15,11 +15,6 @@
                     class="w-2 h-2 rounded-full bg-success-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></span>
                 <span class="text-[10px] font-bold text-success-500 uppercase tracking-widest">Neural Sync Active</span>
             </div>
-            <div class="flex items-center space-x-1 opacity-50">
-                <span class="text-[8px] font-mono text-gray-500 uppercase">Latency: 14ms</span>
-                <span class="text-gray-600">|</span>
-                <span class="text-[8px] font-mono text-gray-500 uppercase">Uptime: 99.9%</span>
-            </div>
         </div>
     </div>
 
@@ -31,6 +26,29 @@
                 <?php echo $total_customers; ?>
             </h3>
         </div>
+        <!-- Bank Reserve -->
+        <div
+            class="glass-light p-8 rounded-[2rem] border border-blue-500/20 relative overflow-hidden group hover:border-blue-500/40 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Bank Reserve</p>
+                    <h3 class="text-3xl font-black text-blue-500">৳
+                        <?php echo number_format($bank_reserve, 0); ?>
+                    </h3>
+                </div>
+                <div
+                    class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-landmark text-lg"></i>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-[9px] font-bold text-gray-500">System Asset Liquidity</span>
+            </div>
+            <div
+                class="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors">
+            </div>
+        </div>
+
         <div class="glass-light p-6 rounded-2xl border border-success-500/20">
             <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Total Liquidity</p>
             <h3 class="text-3xl font-black text-white">৳

@@ -15,19 +15,33 @@
         </div>
         <?php endif; ?>
 
-        <form data-tilt data-tilt-glare data-tilt-max-glare="0.5"
+        <form data-tilt data-tilt-glare data-tilt-max-glare="0.5" enctype="multipart/form-data"
             class="glass-light p-8 rounded-2xl border border-primary-500/30 space-y-6 transform transition-all duration-300 hover:scale-[1.02]"
             method="POST" action="signup.php">
 
             <div>
                 <label for="usertype" class="block text-sm font-medium text-gray-300 mb-2">
-                    <i class="fas fa-users-cog mr-2 text-primary-400"></i>Account Type
+                    <i class="fas fa-users-cog mr-2 text-primary-400"></i>User Role
                 </label>
                 <select id="usertype" name="usertype" required
                     class="w-full px-4 py-3 bg-slate-900/50 border border-primary-500/30 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 outline-none transition-all appearance-none cursor-pointer text-sm font-bold">
                     <option value="Customer">Customer</option>
                     <option value="Admin">Bank Official (Admin)</option>
                     <option value="Staff">Bank Staff</option>
+                </select>
+            </div>
+
+            <!-- Real Account Type -->
+            <div id="account-type-group">
+                <label for="account_type" class="block text-sm font-medium text-gray-300 mb-2">
+                    <i class="fas fa-wallet mr-2 text-primary-400"></i>Account Schema
+                </label>
+                <select id="account_type" name="account_type"
+                    class="w-full px-4 py-3 bg-slate-900/50 border border-primary-500/30 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 outline-none transition-all appearance-none cursor-pointer text-sm font-bold">
+                    <option value="Savings">Savings Account</option>
+                    <option value="Current">Current Account</option>
+                    <option value="Student">Student Account</option>
+                    <option value="Business">Business Account</option>
                 </select>
             </div>
 
@@ -99,28 +113,38 @@
                     class="w-full px-4 py-3 bg-slate-900/50 border border-primary-500/30 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 outline-none transition-all text-sm"
                     placeholder="••••••••">
                 <p class="mt-1 text-xs text-gray-400">Must be at least 4 characters long</p>
-            </div>
+                <div>
+                    <label for="kyc_document" class="block text-sm font-medium text-gray-300 mb-2">
+                        <i class="fas fa-id-card mr-2 text-primary-400"></i>Verification Document (NID/Passport)
+                    </label>
+                    <div class="relative group">
+                        <input id="kyc_document" name="kyc_document" type="file" required
+                            class="w-full px-4 py-3 bg-slate-900/50 border border-primary-500/30 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-400 hover:file:bg-primary-500/20 transition-all text-sm cursor-pointer border-dashed">
+                    </div>
+                    <p class="mt-1 text-xs text-gray-400">Upload clear photo of ID or Passport (JPG/PNG)</p>
+                </div>
 
-            <div class="flex items-center">
-                <input id="terms" name="terms" type="checkbox" required
-                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                <label for="terms" class="ml-2 block text-sm text-gray-300">
-                    I agree to the <a href="terms.php" target="_blank"
-                        class="text-primary-400 hover:text-primary-300 underline font-semibold">Terms & Conditions</a>
-                </label>
-            </div>
+                <div class="flex items-center">
+                    <input id="terms" name="terms" type="checkbox" required
+                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-300">
+                        I agree to the <a href="terms.php" target="_blank"
+                            class="text-primary-400 hover:text-primary-300 underline font-semibold">Terms &
+                            Conditions</a>
+                    </label>
+                </div>
 
-            <button type="submit"
-                class="w-full px-6 py-4 bg-gradient-to-r from-primary-500 to-success-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transform hover:scale-[1.02] transition-all duration-300">
-                <i class="fas fa-user-plus mr-2"></i>Create Account
-            </button>
+                <button type="submit"
+                    class="w-full px-6 py-4 bg-gradient-to-r from-primary-500 to-success-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transform hover:scale-[1.02] transition-all duration-300">
+                    <i class="fas fa-user-plus mr-2"></i>Create Account
+                </button>
 
-            <div class="text-center pt-2">
-                <p class="text-sm text-gray-400">
-                    Already have an account?
-                    <a href="login.php" class="text-primary-400 hover:text-primary-300 font-semibold">Sign In</a>
-                </p>
-            </div>
+                <div class="text-center pt-2">
+                    <p class="text-sm text-gray-400">
+                        Already have an account?
+                        <a href="login.php" class="text-primary-400 hover:text-primary-300 font-semibold">Sign In</a>
+                    </p>
+                </div>
         </form>
     </div>
 </section>

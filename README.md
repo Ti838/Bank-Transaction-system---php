@@ -69,15 +69,14 @@ PROJECT/
 
 ## Database Partitioning
 
-The system utilizes a high-integrity partitioned data model:
+The system utilizing a simplified, high-performance data model:
 
-1. **users** - Central Authentication (Email, Hash, Role Binding).
-2. **admin_details** - Exclusive Administrator metadata.
-3. **staff_details** - Exclusive Staff professional profiles.
-4. **customer_details** - Comprehensive Customer KYC data.
-5. **accounts** - Financial vaults linked to Users.
-6. **transactions** - Immutable operational ledger.
-7. **settings** - Global system configuration parameters.
+1. **users** - Unified entity containing Authentication & Profile Data (Full Name, Address, Bio, etc.).
+2. **roles** - Role definitions (Admin, Staff, Customer).
+3. **accounts** - Financial vaults linked to Users.
+4. **transactions** - Immutable operational ledger.
+5. **notifications** - User alerts and messaging.
+6. **settings** - Global system configuration parameters.
 
 ## Security Architecture
 

@@ -6,9 +6,13 @@ require_role('Admin');
 $stmt = $pdo->query("SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'Customer'");
 $total_customers = $stmt->fetchColumn();
 
-// Exclude admin account (2020000001) from total balance calculation
+// Calculate Total User Holdings (Liquidity Liability)
 $stmt = $pdo->query("SELECT SUM(balance) FROM accounts WHERE account_number != '2020000001'");
 $total_balance = $stmt->fetchColumn() ?: 0;
+
+// Fetch Bank Reserve (Actual Cash/Asset)
+$stmt = $pdo->query("SELECT balance FROM accounts WHERE account_number = '2020000001'");
+$bank_reserve = $stmt->fetchColumn() ?: 0;
 
 $stmt = $pdo->query("SELECT SUM(fee) FROM transactions WHERE status = 'Success'");
 $total_revenue = $stmt->fetchColumn() ?: 0;
@@ -55,6 +59,7 @@ render('admin/dashboard', [
     'page_title' => 'Admin Control - Trust Mora Bank',
     'total_customers' => $total_customers,
     'total_balance' => $total_balance,
+    'bank_reserve' => $bank_reserve,
     'total_revenue' => $total_revenue,
     'today_transactions_count' => $today_transactions_count,
     'total_deposits_today' => $total_deposits_today,

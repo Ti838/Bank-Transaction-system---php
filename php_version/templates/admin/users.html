@@ -19,6 +19,20 @@
     </div>
     <?php endif; ?>
 
+    <!-- Role Filter Tabs -->
+    <div class="flex space-x-4 mb-8">
+        <a href="users.php"
+            class="<?php echo $current_role === 'All' ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30' : 'bg-primary-500/10 text-primary-400 hover:bg-primary-500/20'; ?> px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">All
+            Entities</a>
+
+        <a href="users.php?role=Staff"
+            class="<?php echo $current_role === 'Staff' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' : 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20'; ?> px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Staff
+            Personnel</a>
+
+        <a href="users.php?role=Customer"
+            class="<?php echo $current_role === 'Customer' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'; ?> px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Customers</a>
+    </div>
+
     <div class="glass-light rounded-[2rem] border border-primary-500/10 overflow-hidden shadow-2xl">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -45,18 +59,35 @@
                                     <?php echo substr($u['full_name'], 0, 1); ?>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-black text-white uppercase">
-                                        <?php echo $u['full_name']; ?>
-                                        <span
-                                            class="ml-2 text-[9px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400">ID:
+                                    <p class="text-sm font-black text-white uppercase flex items-center gap-2">
+                                        <a href="user_details.php?id=<?php echo $u['id']; ?>"
+                                            class="hover:text-primary-400 transition-colors underline decoration-dotted decoration-primary-500/50 underline-offset-4">
+                                            <?php echo $u['full_name']; ?>
+                                        </a>
+                                        <span class="text-[9px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400">ID:
                                             <?php echo $u['id']; ?>
                                         </span>
                                     </p>
-                                    <p class="text-[10px] text-gray-500 font-bold">
+                                    <p class="text-[10px] text-gray-500 font-bold mb-1">
                                         <?php echo $u['email']; ?>
                                     </p>
+                                    <?php if (!empty($u['kyc_document'])): ?>
+                                    <a href="../static/uploads/kyc/<?php echo $u['kyc_document']; ?>" target="_blank"
+                                        class="text-[9px] font-black text-gold-400 border border-gold-400/30 px-2 py-0.5 rounded uppercase hover:bg-gold-400 hover:text-black transition-colors">
+                                        <i class="fas fa-file-contract mr-1"></i>View KYC
+                                    </a>
+                                    <?php else: ?>
+                                    <span class="text-[8px] text-red-400 uppercase font-bold tracking-wider">No
+                                        KYC</span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
+                        </td>
+                        <td class="py-6 px-8">
+                            <span
+                                class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-primary-500/10 text-primary-400">
+                                <?php echo $u['role_name']; ?>
+                            </span>
                         </td>
                         <td class="py-6 px-8">
                             <?php if ($u['account_status']): ?>
@@ -75,8 +106,7 @@
                             </p>
                         </td>
                         <td class="py-6 px-8">
-                            <div
-                                class="flex justify-center items-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="flex justify-center items-center space-x-3">
                                 <?php if ($u['role_name'] === 'Customer'): ?>
                                 <?php if ($u['account_status'] === 'Pending'): ?>
                                 <a href="users.php?action=approve&id=<?php echo $u['id']; ?>"
