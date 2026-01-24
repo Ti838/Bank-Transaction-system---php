@@ -159,7 +159,9 @@
             <!-- Distribution Matrix -->
             <div
                 class="glass-light p-8 rounded-[2.5rem] border border-primary-500/10 shadow-2xl h-60 relative overflow-hidden flex flex-col items-center justify-center">
-                <canvas id="staffChart" class="relative z-10"></canvas>
+                <canvas id="staffChart" class="relative z-10" data-ingress="<?php echo (int)$count_deposits; ?>"
+                    data-egress="<?php echo (int)$count_withdrawals; ?>"
+                    data-shift="<?php echo (int)$count_transfers; ?>"></canvas>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <p class="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Volume</p>
                     <p class="text-xl font-black text-white">
@@ -173,41 +175,42 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const ctx = document.getElementById('staffChart').getContext('2d');
+        const canvas = document.getElementById('staffChart');
+        const ctx = canvas.getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Ingress', 'Egress', 'Shift'],
                 datasets: [{
                     data: [
-                        <? php echo(int)$count_deposits; ?>,
-                        <? php echo(int)$count_withdrawals; ?>,
-                        <? php echo(int)$count_transfers; ?>
+                        canvas.dataset.ingress,
+                        canvas.dataset.egress,
+                        canvas.dataset.shift
                     ],
-        backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
-            hoverOffset: 15,
-                borderWidth: 0,
+                    backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
+                    hoverOffset: 15,
+                    borderWidth: 0,
                     borderRadius: 10,
-                        spacing: 10
-    }]
+                    spacing: 10
+                }]
             },
-        options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '85%',
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                enabled: true,
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                titleFont: { size: 10, weight: 'bold' },
-                bodyFont: { size: 12, weight: '900' },
-                padding: 12,
-                cornerRadius: 12,
-                displayColors: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '85%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { size: 10, weight: 'bold' },
+                        bodyFont: { size: 12, weight: '900' },
+                        padding: 12,
+                        cornerRadius: 12,
+                        displayColors: false
+                    }
+                }
             }
-        }
-    }
         });
     });
 </script>
