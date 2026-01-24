@@ -179,7 +179,11 @@
             data: {
                 labels: ['Ingress', 'Egress', 'Shift'],
                 datasets: [{
-                    data: [<? php echo(int)$count_deposits; ?>, <? php echo(int)$count_withdrawals; ?>, <? php echo(int)$count_transfers; ?>],
+                    data: [
+                        <? php echo(int)$count_deposits; ?>,
+                        <? php echo(int)$count_withdrawals; ?>,
+                        <? php echo(int)$count_transfers; ?>
+                    ],
         backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
             hoverOffset: 15,
                 borderWidth: 0,
