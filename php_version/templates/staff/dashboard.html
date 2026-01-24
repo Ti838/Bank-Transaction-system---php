@@ -161,7 +161,8 @@
                 class="glass-light p-8 rounded-[2.5rem] border border-primary-500/10 shadow-2xl h-60 relative overflow-hidden flex flex-col items-center justify-center">
                 <canvas id="staffChart" class="relative z-10" data-ingress="<?php echo (int)$count_deposits; ?>"
                     data-egress="<?php echo (int)$count_withdrawals; ?>"
-                    data-shift="<?php echo (int)$count_transfers; ?>"></canvas>
+                    data-shift="<?php echo (int)$count_transfers; ?>"
+                    aria-label="Distribution of daily deposits, withdrawals, and transfers"></canvas>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <p class="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Volume</p>
                     <p class="text-xl font-black text-white">

@@ -6,7 +6,7 @@
         ?>
         <a href="<?php echo $prefix; ?>index.php"
             class="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
-            <img src="<?php echo $prefix; ?>static/favicon.png"
+            <img src="<?php echo $prefix; ?>static/favicon.png" alt="Trust Mora Bank Logo"
                 class="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.3)]">
             <span class="text-xl font-bold gradient-text">Trust Mora Bank</span>
         </a>
@@ -54,7 +54,7 @@
                         <p class="text-xs font-bold text-white"><?php echo $_SESSION['full_name']; ?></p>
                     </div>
                     <a href="<?php echo $prefix; ?>customer/profile.php" class="relative group">
-                        <img src="<?php echo $prefix; ?>static/default_avatar.png"
+                        <img src="<?php echo $prefix; ?>static/default_avatar.png" alt="User Avatar"
                             class="w-10 h-10 rounded-full border-2 border-primary-500/30 group-hover:border-primary-500 transition-all">
                         <div
                             class="absolute -bottom-1 -right-1 w-3 h-3 bg-success-500 border-2 border-[#0f172a] rounded-full">
