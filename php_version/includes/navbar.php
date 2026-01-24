@@ -11,14 +11,14 @@
             <span class="text-xl font-bold gradient-text">Trust Mora Bank</span>
         </a>
 
-        <button id="mobile-menu-toggle" class="lg:hidden text-white focus:outline-none">
+        <button id="mobile-menu-toggle" aria-label="Toggle Mobile Menu" class="lg:hidden text-white focus:outline-none">
             <i class="fas fa-bars text-xl"></i>
         </button>
 
         <div id="nav-links" class="hidden lg:flex items-center space-x-6">
 
             <!-- Theme Toggle -->
-            <button id="theme-toggle"
+            <button id="theme-toggle" aria-label="Toggle Dark/Light Theme"
                 class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-primary-400">
                 <i class="fas fa-moon text-lg translate-y-[-1px]"></i>
             </button>
