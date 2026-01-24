@@ -81,7 +81,13 @@
                                     </p>
                                     <p
                                         class="text-[9px] text-gray-500 font-bold uppercase tracking-tighter truncate max-w-[150px]">
-                                        <?php echo $t['from_name'] ?: ($t['to_name'] ?: 'SYSTEM_CORE'); ?>
+                                        <?php 
+                                            if ($t['transaction_type'] === 'Transfer') {
+                                                echo ($t['from_name'] ?: 'External') . ' → ' . ($t['to_name'] ?: 'External');
+                                            } else {
+                                                echo $t['from_name'] ?: ($t['to_name'] ?: 'SYSTEM_CORE');
+                                            }
+                                        ?>
                                     </p>
                                 </td>
                                 <td class="py-6 text-right">
@@ -173,7 +179,7 @@
             data: {
                 labels: ['Ingress', 'Egress', 'Shift'],
                 datasets: [{
-                    data: [<? php echo(int) $count_deposits; ?>, <? php echo(int) $count_withdrawals; ?>, <? php echo(int) $count_transfers; ?>],
+                    data: [<? php echo(int)$count_deposits; ?>, <? php echo(int)$count_withdrawals; ?>, <? php echo(int)$count_transfers; ?>],
         backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
             hoverOffset: 15,
                 borderWidth: 0,
