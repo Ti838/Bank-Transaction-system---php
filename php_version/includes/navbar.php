@@ -31,19 +31,24 @@
                     $unread_stmt->execute([$_SESSION['user_id']]);
                     $unread_count = $unread_stmt->fetchColumn();
                     ?>
-                    <button id="notification-toggle" class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-primary-400 relative">
+                    <button id="notification-toggle"
+                        class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-primary-400 relative">
                         <i class="fas fa-bell text-lg"></i>
                         <?php if ($unread_count > 0): ?>
-                            <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-[#0f172a] rounded-full animate-pulse"></span>
+                            <span
+                                class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-[#0f172a] rounded-full animate-pulse"></span>
                         <?php endif; ?>
                     </button>
-                    
+
                     <!-- Notification Dropdown -->
-                    <div id="notification-dropdown" class="hidden absolute right-0 mt-4 w-80 glass-light border border-primary-500/20 rounded-2xl shadow-2xl py-4 z-[100] animate-fade-in">
+                    <div id="notification-dropdown"
+                        class="hidden absolute right-0 mt-4 w-80 glass-light border border-primary-500/20 rounded-2xl shadow-2xl py-4 z-[100] animate-fade-in">
                         <div class="px-6 pb-3 border-b border-white/10 flex justify-between items-center">
                             <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Alert Stream</span>
                             <?php if ($unread_count > 0): ?>
-                                <span class="bg-primary-500/20 text-primary-400 text-[8px] px-2 py-0.5 rounded-full font-black uppercase"><?php echo $unread_count; ?> New</span>
+                                <span
+                                    class="bg-primary-500/20 text-primary-400 text-[8px] px-2 py-0.5 rounded-full font-black uppercase"><?php echo $unread_count; ?>
+                                    New</span>
                             <?php endif; ?>
                         </div>
                         <div class="max-h-64 overflow-y-auto custom-scrollbar">
@@ -51,18 +56,19 @@
                             $notif_stmt = $pdo->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
                             $notif_stmt->execute([$_SESSION['user_id']]);
                             $nav_notifs = $notif_stmt->fetchAll();
-                            
+
                             if ($nav_notifs):
                                 foreach ($nav_notifs as $nn):
-                            ?>
-                                <div class="px-6 py-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
-                                    <p class="text-[11px] text-white leading-relaxed mb-1"><?php echo $nn['message']; ?></p>
-                                    <p class="text-[8px] text-gray-500 font-bold uppercase"><?php echo date('d M, H:i', strtotime($nn['created_at'])); ?></p>
-                                </div>
-                            <?php 
+                                    ?>
+                                    <div class="px-6 py-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                                        <p class="text-[11px] text-white leading-relaxed mb-1"><?php echo $nn['message']; ?></p>
+                                        <p class="text-[8px] text-gray-500 font-bold uppercase">
+                                            <?php echo date('d M, H:i', strtotime($nn['created_at'])); ?></p>
+                                    </div>
+                                <?php
                                 endforeach;
                             else:
-                            ?>
+                                ?>
                                 <div class="px-6 py-8 text-center">
                                     <i class="fas fa-shield-blank text-gray-800 text-2xl mb-2"></i>
                                     <p class="text-[10px] text-gray-600 font-black uppercase">No Data Pulses</p>
@@ -70,7 +76,9 @@
                             <?php endif; ?>
                         </div>
                         <div class="px-6 pt-3 border-t border-white/10 text-center">
-                            <a href="<?php echo $prefix; ?>customer/dashboard.php" class="text-[8px] font-black text-primary-400 uppercase tracking-widest hover:text-white transition-colors">Neural Interface Access</a>
+                            <a href="<?php echo $prefix; ?>customer/dashboard.php"
+                                class="text-[8px] font-black text-primary-400 uppercase tracking-widest hover:text-white transition-colors">Neural
+                                Interface Access</a>
                         </div>
                     </div>
                 </div>
@@ -155,7 +163,7 @@
     // Notification Dropdown Toggle
     const notifToggle = document.getElementById('notification-toggle');
     const notifDropdown = document.getElementById('notification-dropdown');
-    
+
     if (notifToggle && notifDropdown) {
         notifToggle.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -169,9 +177,29 @@
         });
     }
 
-    // Load saved theme
-    if (localStorage.getItem('theme') === 'light') {
-        document.body.classList.add('light-theme');
-        icon.classList.replace('fa-moon', 'fa-sun');
+    // Theme Toggle System
+    const themeToggle = document.getElementById('theme-toggle');
+
+    if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
+
+        // Load saved theme on page load
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            if (icon) icon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+
+            if (document.body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+                if (icon) icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                localStorage.setItem('theme', 'dark');
+                if (icon) icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
     }
 </script>
