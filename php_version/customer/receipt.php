@@ -4,8 +4,26 @@ require_login();
 
 $transaction_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if (!$transaction_id) {
-    die("Invalid Transaction ID.");
+// Determine dashboard URL based on role
+$in_subfolder = true;
+$prefix = '../';
+$dashboard_urls = [
+    'Admin' => $prefix . 'admin/dashboard.php',
+    'Staff' => $prefix . 'staff/dashboard.php',
+    'Customer' => $prefix . 'customer/dashboard.php'
+];
+$dashboard_url = $dashboard_urls[$_SESSION['role']] ?? $prefix . 'index.php';
+
+if (!$transaction_id || $transaction_id <= 0) {
+    render('shared/error', [
+        'page_title' => 'Invalid Transaction - Trust Mora Bank',
+        'error_title' => 'Invalid Transaction ID',
+        'error_message' => 'The transaction ID provided is invalid or missing. Please check the link and try again.',
+        'back_url' => 'javascript:history.back()',
+        'dashboard_url' => $dashboard_url,
+        'error_details' => 'Transaction ID must be a positive integer. Received: ' . ($_GET['id'] ?? 'none')
+    ]);
+    exit;
 }
 
 // Fetch transaction with account details and user names from all detail tables
@@ -30,7 +48,15 @@ $stmt->execute([$transaction_id]);
 $transaction = $stmt->fetch();
 
 if (!$transaction) {
-    die("Transaction not found.");
+    render('shared/error', [
+        'page_title' => 'Transaction Not Found - Trust Mora Bank',
+        'error_title' => 'Transaction Not Found',
+        'error_message' => 'The requested transaction could not be found in our system. It may have been deleted or the ID is incorrect.',
+        'back_url' => 'javascript:history.back()',
+        'dashboard_url' => $dashboard_url,
+        'error_details' => 'No transaction found with ID: ' . $transaction_id
+    ]);
+    exit;
 }
 
 // Access Control Logic
@@ -50,7 +76,15 @@ if ($_SESSION['role'] === 'Customer') {
 
 // Admins and Staff can see everything; Customers only see their own
 if (!$is_admin_or_staff && !$is_owner) {
-    die("Unauthorized access.");
+    render('shared/error', [
+        'page_title' => 'Unauthorized Access - Trust Mora Bank',
+        'error_title' => 'Unauthorized Access',
+        'error_message' => 'You do not have permission to view this transaction. You can only view transactions associated with your account.',
+        'back_url' => 'javascript:history.back()',
+        'dashboard_url' => $dashboard_url,
+        'error_details' => 'Access denied for transaction ID: ' . $transaction_id
+    ]);
+    exit;
 }
 
 render('customer/receipt', [

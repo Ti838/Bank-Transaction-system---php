@@ -6,7 +6,8 @@ require_role('Admin');
 $stmt = $pdo->query("SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'Customer'");
 $total_customers = $stmt->fetchColumn();
 
-$stmt = $pdo->query("SELECT SUM(balance) FROM accounts");
+// Exclude admin account (2020000001) from total balance calculation
+$stmt = $pdo->query("SELECT SUM(balance) FROM accounts WHERE account_number != '2020000001'");
 $total_balance = $stmt->fetchColumn() ?: 0;
 
 $stmt = $pdo->query("SELECT SUM(fee) FROM transactions WHERE status = 'Success'");

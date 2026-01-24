@@ -8,7 +8,7 @@ $stmt->execute([$user_id]);
 $account = $stmt->fetch();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $to_account = $_POST['to_account'] ?? '';
+    $to_account = trim($_POST['to_account'] ?? '');
     $amount = floatval($_POST['amount'] ?? 0);
     $description = $_POST['description'] ?? 'Transfer';
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = process_transfer($account['id'], $to_account, $amount, $description);
         $_SESSION['flash'] = ['type' => $result['success'] ? 'success' : 'danger', 'message' => $result['message']];
         if ($result['success']) {
-            redirect('receipt.php?id=' . $pdo->lastInsertId());
+            redirect('receipt.php?id=' . $result['transaction_id']);
         }
     }
 }

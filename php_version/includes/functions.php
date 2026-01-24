@@ -74,11 +74,12 @@ function process_deposit($account_id, $amount, $description = 'Deposit')
 
         $stmt = $pdo->prepare("INSERT INTO transactions (transaction_type, amount, to_account_id, status, description) VALUES ('Deposit', ?, ?, 'Success', ?)");
         $stmt->execute([$amount, $account_id, $description]);
+        $transaction_id = $pdo->lastInsertId();
 
         create_notification($account['user_id'], "Deposit of ৳" . number_format($amount, 2) . " successful.", "Success");
 
         $pdo->commit();
-        return ['success' => true, 'message' => "Deposit successful."];
+        return ['success' => true, 'message' => "Deposit successful.", 'transaction_id' => $transaction_id];
     } catch (Exception $e) {
         $pdo->rollBack();
         return ['success' => false, 'message' => $e->getMessage()];
@@ -112,11 +113,12 @@ function process_withdrawal($account_id, $amount, $description = 'Withdrawal')
 
         $stmt = $pdo->prepare("INSERT INTO transactions (transaction_type, amount, from_account_id, status, description) VALUES ('Withdrawal', ?, ?, 'Success', ?)");
         $stmt->execute([$amount, $account_id, $description]);
+        $transaction_id = $pdo->lastInsertId();
 
         create_notification($account['user_id'], "Withdrawal of ৳" . number_format($amount, 2) . " successful.", "Success");
 
         $pdo->commit();
-        return ['success' => true, 'message' => "Withdrawal successful."];
+        return ['success' => true, 'message' => "Withdrawal successful.", 'transaction_id' => $transaction_id];
     } catch (Exception $e) {
         $pdo->rollBack();
         return ['success' => false, 'message' => $e->getMessage()];
@@ -164,13 +166,14 @@ function process_transfer($from_account_id, $to_account_number, $amount, $descri
         // Record transaction
         $stmt = $pdo->prepare("INSERT INTO transactions (transaction_type, amount, fee, from_account_id, to_account_id, status, description) VALUES ('Transfer', ?, ?, ?, ?, 'Success', ?)");
         $stmt->execute([$amount, $fee, $from_account_id, $dest['id'], $description]);
+        $transaction_id = $pdo->lastInsertId();
 
         // Notifications
         create_notification($src['user_id'], "Transferred ৳" . number_format($amount, 2) . " (Fee: ৳" . number_format($fee, 2) . ") to $to_account_number", "Success");
         create_notification($dest['user_id'], "Received ৳" . number_format($amount, 2) . " from " . $src['account_number'], "Success");
 
         $pdo->commit();
-        return ['success' => true, 'message' => "Transfer successful."];
+        return ['success' => true, 'message' => "Transfer successful.", 'transaction_id' => $transaction_id];
     } catch (Exception $e) {
         $pdo->rollBack();
         return ['success' => false, 'message' => $e->getMessage()];

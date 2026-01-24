@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = process_withdrawal($account['id'], $amount, $description);
         $_SESSION['flash'] = ['type' => $result['success'] ? 'success' : 'danger', 'message' => $result['message']];
         if ($result['success']) {
-            redirect('receipt.php?id=' . $pdo->lastInsertId());
+            redirect('receipt.php?id=' . $result['transaction_id']);
         }
     }
 }

@@ -5,7 +5,7 @@ require_role('Admin');
 // Get today's date for filtering
 $today = date('Y-m-d');
 
-// Fetch all transactions with user names
+// Fetch all transactions with user names, excluding bank's own account
 $stmt = $pdo->prepare("
     SELECT t.*,
            fa.account_number as from_acc,
@@ -22,6 +22,8 @@ $stmt = $pdo->prepare("
     LEFT JOIN staff_details tsd ON ta.user_id = tsd.user_id
     LEFT JOIN customer_details tcd ON ta.user_id = tcd.user_id
     WHERE DATE(t.created_at) = ?
+      AND (fa.account_number != '2020000001' OR fa.account_number IS NULL)
+      AND (ta.account_number != '2020000001' OR ta.account_number IS NULL)
     ORDER BY t.created_at DESC
 ");
 $stmt->execute([$today]);
