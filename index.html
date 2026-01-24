@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Mora Bank - Secure Digital Banking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <link rel="icon" type="image/png" href="php_version/static/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 500: '#3b82f6' },
+                        success: { 600: '#059669' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-light {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #34d399);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            overflow-x: hidden;
+        }
+
+        .dynamic-money {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Light Theme overrides */
+        body.light-theme {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
+            color: #1e293b;
+        }
+
+        body.light-theme .glass-light {
+            background: rgba(255, 255, 255, 0.8) !important;
+            border: 1px solid rgba(59, 130, 246, 0.2) !important;
+            color: #1e293b !important;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            header,
+            nav,
+            footer,
+            .no-print,
+            button,
+            #mobile-menu-toggle,
+            #theme-toggle {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-100 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="glass-light border-b border-primary-500/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
+                <img src="php_version/static/favicon.png" alt="Trust Mora Bank Logo"
+                    class="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                <span class="text-xl font-bold gradient-text">Trust Mora Bank</span>
+            </a>
+
+            <button id="mobile-menu-toggle" aria-label="Toggle Mobile Menu"
+                class="lg:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+
+            <div id="nav-links" class="hidden lg:flex items-center space-x-6">
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" aria-label="Toggle Dark/Light Theme"
+                    class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-primary-400">
+                    <i class="fas fa-moon text-lg translate-y-[-1px]"></i>
+                </button>
+
+                <a href="php_version/login.php" class="text-sm font-bold hover:text-primary-400">Sign In</a>
+                <a href="php_version/signup.php"
+                    class="bg-primary-600 px-6 py-2 rounded-full text-xs font-bold hover:shadow-lg hover:shadow-primary-500/50 transition-all text-white uppercase tracking-widest">Join
+                    Bank</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative min-h-[calc(100vh-5rem)] flex flex-col justify-center py-10">
+            <!-- Animated Background -->
+            <div class="absolute inset-0 overflow-hidden">
+                <div
+                    class="absolute top-20 left-10 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl animate-pulse-slow">
+                </div>
+                <div class="absolute bottom-20 right-10 w-96 h-96 bg-success-500/20 rounded-full blur-3xl animate-pulse-slow"
+                    style="animation-delay: 1s;"></div>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gold-500/10 rounded-full blur-3xl animate-pulse-slow"
+                    style="animation-delay: 2s;"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <div class="mb-6 animate-float inline-block">
+                        <img src="php_version/static/favicon.png" alt="Trust Mora Bank Logo"
+                            class="w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] mx-auto rounded-full border-2 border-primary-500/20 backdrop-blur-sm">
+                    </div>
+                    <h1
+                        class="text-4xl md:text-6xl lg:text-8xl font-black font-poppins gradient-text mb-6 leading-tight tracking-tighter">
+                        Trust Mora Bank
+                    </h1>
+                    <p class="text-lg md:text-2xl text-gray-300 mb-10 max-w-4xl mx-auto leading-relaxed">
+                        Experience modern online banking with instant transfers, secure transactions, and 24/7 account
+                        access.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="php_version/signup.php"
+                            class="px-8 py-4 bg-gradient-to-r from-primary-500 to-success-600 text-white rounded-full font-bold text-lg hover:shadow-2xl hover:shadow-primary-500/50 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-user-plus mr-2"></i>Get Started
+                        </a>
+                        <a href="#features"
+                            class="px-8 py-4 glass-light border-2 border-primary-500/50 text-white rounded-full font-bold text-lg hover:bg-primary-500/20 hover:shadow-2xl hover:shadow-success-500/50 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-info-circle mr-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+
+                <!-- GitHub Hosting Notice -->
+                <div
+                    class="max-w-2xl mx-auto mb-16 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-center">
+                    <p class="text-amber-400 text-xs font-bold uppercase tracking-widest">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> Preview Mode: GitHub Pages only supports static
+                        content. Dynamic features require a PHP server.
+                    </p>
+                </div>
+
+                <!-- Features Grid -->
+                <div id="features" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-16">
+                    <div
+                        class="glass-light rounded-2xl p-8 border border-primary-500/30 hover:border-primary-500 hover:shadow-2xl transform hover:scale-105 transition-all group">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg">
+                            <i class="fas fa-shield-alt text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary-400 mb-4">Bank-Grade Security</h3>
+                        <p class="text-gray-300 leading-relaxed">256-bit encryption protects all your transactions and
+                            personal data with the highest security standards.</p>
+                    </div>
+                    <div
+                        class="glass-light rounded-2xl p-8 border border-success-500/30 hover:border-success-500 hover:shadow-2xl transform hover:scale-105 transition-all group">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-success-500 to-success-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg">
+                            <i class="fas fa-bolt text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-success-400 mb-4">Instant Transfers</h3>
+                        <p class="text-gray-300 leading-relaxed">Send money in real-time to any account with zero
+                            transfer fees and immediate confirmation.</p>
+                    </div>
+                    <div
+                        class="glass-light rounded-2xl p-8 border border-purple-500/30 hover:border-purple-500 hover:shadow-2xl transform hover:scale-105 transition-all group">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg">
+                            <i class="fas fa-mobile-alt text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-purple-400 mb-4">Mobile Banking</h3>
+                        <p class="text-gray-300 leading-relaxed">Access your account anytime, anywhere on any device
+                            with our secure mobile platform.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-light text-gray-400 py-8 px-6 mt-auto border-t border-white/10">
+        <div class="max-w-7xl mx-auto flex flex-col items-center space-y-4">
+            <div class="flex items-center space-x-2">
+                <img src="php_version/static/favicon.png" class="w-8 h-8 rounded shadow-lg" alt="Logo">
+                <span class="text-xl font-bold text-white tracking-tight">Trust Mora Bank PLC</span>
+            </div>
+            <div class="text-center space-y-2">
+                <p class="text-sm font-medium">&copy; 2026 Trust Mora Bank PLC. All Rights Reserved.</p>
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Developed by <span
+                        class="text-primary-400 font-bold">Timon Biswas</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu
+        document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
+            // For static preview, simple toggle logic
+            alert('Navigation is restricted in static preview mode. Please host on a PHP server for full access.');
+        });
+
+        // Theme Toggle Logic
+        const themeBtn = document.getElementById('theme-toggle');
+        const icon = themeBtn.querySelector('i');
+
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+    </script>
+</body>
+
+</html>
