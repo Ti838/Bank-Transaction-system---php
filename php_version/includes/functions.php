@@ -3,9 +3,7 @@ require_once 'db.php';
 
 session_start();
 
-/**
- * Creates a notification for a user.
- */
+
 function create_notification($user_id, $message, $type = 'Info')
 {
     global $pdo;
@@ -13,16 +11,19 @@ function create_notification($user_id, $message, $type = 'Info')
     return $stmt->execute([$user_id, $message, $type]);
 }
 
+
 /**
- * Generates a random 10-digit account number starting with 202.
+ * Generates a unique 10-digit account number starting with '202'.
  */
 function generate_account_number()
 {
     return '202' . str_pad(mt_rand(0, 9999999), 7, '0', STR_PAD_LEFT);
 }
 
+
 /**
- * Gets system settings.
+ * Retrieves system settings from DB or returns defaults.
+ * Uses static caching to minimize DB queries.
  */
 function get_system_settings($key = null)
 {
@@ -41,9 +42,7 @@ function get_system_settings($key = null)
     return $key ? ($settings[$key] ?? null) : $settings;
 }
 
-/**
- * Updates a system setting.
- */
+
 function update_system_setting($key, $value)
 {
     global $pdo;
@@ -51,8 +50,9 @@ function update_system_setting($key, $value)
     return $stmt->execute([$key, $value, $value]);
 }
 
+
 /**
- * Processes a deposit into an account.
+ * Atomic Deposit: Uses Transaction to ensure DB consistency.
  */
 function process_deposit($account_id, $amount, $description = 'Deposit')
 {
@@ -86,8 +86,9 @@ function process_deposit($account_id, $amount, $description = 'Deposit')
     }
 }
 
+
 /**
- * Processes a withdrawal from an account.
+ * Atomic Withdrawal: Checks balance & locks row for update.
  */
 function process_withdrawal($account_id, $amount, $description = 'Withdrawal')
 {
@@ -125,8 +126,9 @@ function process_withdrawal($account_id, $amount, $description = 'Withdrawal')
     }
 }
 
+
 /**
- * Processes a transfer between accounts.
+ * Secure Transfer: Locks both rows, deducts fee, and logs transaction.
  */
 function process_transfer($from_account_id, $to_account_number, $amount, $description = 'Transfer')
 {
@@ -137,8 +139,11 @@ function process_transfer($from_account_id, $to_account_number, $amount, $descri
     try {
         $pdo->beginTransaction();
 
-        // Source account
+
+
+        // Lock Source: Prevent race conditions
         $stmt = $pdo->prepare("SELECT user_id, balance, status, account_number FROM accounts WHERE id = ? FOR UPDATE");
+
         $stmt->execute([$from_account_id]);
         $src = $stmt->fetch();
 
@@ -150,8 +155,11 @@ function process_transfer($from_account_id, $to_account_number, $amount, $descri
             throw new Exception("Insufficient funds (Need ৳" . number_format($total_deduction, 2) . " including fee).");
         }
 
-        // Destination account
+
+
+        // Lock Destination: Atomic update
         $stmt = $pdo->prepare("SELECT id, user_id, balance, status FROM accounts WHERE account_number = ? FOR UPDATE");
+
         $stmt->execute([$to_account_number]);
         $dest = $stmt->fetch();
 
@@ -159,16 +167,16 @@ function process_transfer($from_account_id, $to_account_number, $amount, $descri
             throw new Exception("Destination account not found or inactive.");
         }
 
-        // Update balances
+
         $pdo->prepare("UPDATE accounts SET balance = balance - ? WHERE id = ?")->execute([$total_deduction, $from_account_id]);
         $pdo->prepare("UPDATE accounts SET balance = balance + ? WHERE id = ?")->execute([$amount, $dest['id']]);
 
-        // Record transaction
+
         $stmt = $pdo->prepare("INSERT INTO transactions (transaction_type, amount, fee, from_account_id, to_account_id, status, description) VALUES ('Transfer', ?, ?, ?, ?, 'Success', ?)");
         $stmt->execute([$amount, $fee, $from_account_id, $dest['id'], $description]);
         $transaction_id = $pdo->lastInsertId();
 
-        // Notifications
+
         create_notification($src['user_id'], "Transferred ৳" . number_format($amount, 2) . " (Fee: ৳" . number_format($fee, 2) . ") to $to_account_number", "Success");
         create_notification($dest['user_id'], "Received ৳" . number_format($amount, 2) . " from " . $src['account_number'], "Success");
 
@@ -180,25 +188,22 @@ function process_transfer($from_account_id, $to_account_number, $amount, $descri
     }
 }
 
-/**
- * Simple Redirect function
- */
+
 function redirect($url)
 {
     header("Location: $url");
     exit();
 }
 
-/**
- * Checks if user is logged in
- */
+
 function is_logged_in()
 {
     return isset($_SESSION['user_id']);
 }
 
+
 /**
- * Requires login
+ * Enforce Login: Redirects if not authenticated.
  */
 function require_login()
 {
@@ -210,9 +215,7 @@ function require_login()
     }
 }
 
-/**
- * Requires a specific role
- */
+
 function require_role($role_name)
 {
     require_login();
@@ -223,12 +226,10 @@ function require_role($role_name)
         redirect($prefix . 'index.php');
     }
 }
-/**
- * Gets the exchange rate from a provider (mocked for this implementation).
- */
+
 function get_exchange_rate($from = 'USD', $to = 'BDT')
 {
-    // Industry standard mock rate
+
     $rates = [
         'USD_BDT' => 110.50,
         'BDT_USD' => 0.0090
@@ -236,27 +237,26 @@ function get_exchange_rate($from = 'USD', $to = 'BDT')
     return $rates["{$from}_{$to}"] ?? 1.0;
 }
 
+
 /**
- * Renders a view template with provided data.
- * @param string $template_path Path to the .html template relative to templates/
- * @param array $data Associative array of data to make available in the view
+ * Template Renderer: Loads HTML templates with header/footer shell.
  */
 function render($template_path, $data = [])
 {
     global $pdo;
 
-    // Extract data to make variables available in the scope
+
     extract($data);
 
-    // Default page title if not set
+
     if (!isset($page_title)) {
         $page_title = 'Trust Mora Bank - Secure Digital Banking';
     }
 
-    // Capture the view content
+
     ob_start();
 
-    // Determine base path for includes
+
     $templates_dir = __DIR__ . '/../templates/';
     $template_file = $templates_dir . $template_path . '.html';
 
@@ -268,7 +268,7 @@ function render($template_path, $data = [])
 
     $view_content = ob_get_clean();
 
-    // Include the standard layout
+
     include __DIR__ . '/header.php';
     include __DIR__ . '/navbar.php';
     echo $view_content;

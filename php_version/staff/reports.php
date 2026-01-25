@@ -2,8 +2,10 @@
 require_once '../includes/functions.php';
 require_role('Staff');
 
-// Fetch transactions for today, excluding bank's own account
+
+// Filter: Today's Transactions Excluding System Reserve (2020000001)
 $today = date('Y-m-d');
+
 $stmt = $pdo->prepare("
     SELECT t.*, fa.account_number as from_acc, ta.account_number as to_acc,
            fu.full_name as from_name,
@@ -36,8 +38,10 @@ foreach ($transactions as $t) {
     $total_fees += $t['fee'];
 }
 
-// CSV Export
+
+// Export Protocol: Generate CSV Download
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="staff_daily_' . date('Y-m-d') . '.csv"');
     $output = fopen('php://output', 'w');

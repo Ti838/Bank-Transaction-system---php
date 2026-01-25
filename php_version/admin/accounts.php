@@ -2,7 +2,7 @@
 require_once '../includes/functions.php';
 require_role('Admin');
 
-// Handle Activation/Suspension
+
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'];
     $acc_id = intval($_GET['id']);

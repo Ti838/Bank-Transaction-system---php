@@ -17,7 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($to_account === $account['account_number']) {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Cannot transfer to your own account.'];
     } else {
+        // Execute Atomic P2P Transfer
         $result = process_transfer($account['id'], $to_account, $amount, $description);
+
         $_SESSION['flash'] = ['type' => $result['success'] ? 'success' : 'danger', 'message' => $result['message']];
         if ($result['success']) {
             redirect('receipt.php?id=' . $result['transaction_id']);

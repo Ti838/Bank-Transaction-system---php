@@ -10,7 +10,7 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Identity Card -->
+
         <div class="lg:col-span-1 space-y-8">
             <div
                 class="glass-light p-8 rounded-[2rem] border border-primary-500/20 text-center relative overflow-hidden">
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <!-- KYC Document -->
+
             <div class="glass-light p-8 rounded-[2rem] border border-gold-400/20">
                 <h3 class="text-xs font-black text-gold-400 uppercase tracking-widest mb-6">Verification Document</h3>
                 <?php if (!empty($u['kyc_document'])): ?>
@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <!-- Extended Info -->
+
         <div class="lg:col-span-2 space-y-8">
             <div class="glass-light p-8 rounded-[2rem] border border-primary-500/10">
                 <h3
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <!-- Financial Snapshot -->
+
             <div class="glass-light p-8 rounded-[2rem] border border-success-500/10">
                 <h3
                     class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-success-500 pl-3">
@@ -139,7 +139,7 @@
                 </div>
             </div>
 
-            <!-- Admin Liquidity Control -->
+
             <?php if($_SESSION['role'] === 'Admin'): ?>
             <div class="glass-light p-8 rounded-[2rem] border border-primary-500/10 relative overflow-hidden">
                 <h3
@@ -178,7 +178,7 @@
             </div>
             <?php endif; ?>
 
-            <!-- Recent Activity -->
+
             <div class="glass-light p-8 rounded-[2rem] border border-primary-500/10">
                 <h3
                     class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-gray-500 pl-3">

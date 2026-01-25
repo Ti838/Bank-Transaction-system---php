@@ -11,7 +11,7 @@ $recent_transactions = [];
 $chart_data = [];
 
 if ($account) {
-    // Recent Transactions
+
     $stmt = $pdo->prepare("
         SELECT * FROM transactions 
         WHERE from_account_id = ? OR to_account_id = ? 
@@ -20,7 +20,7 @@ if ($account) {
     $stmt->execute([$account['id'], $account['id']]);
     $recent_transactions = $stmt->fetchAll();
 
-    // Chart Data
+
     $stmt = $pdo->prepare("
         SELECT transaction_type as type, amount, created_at as date 
         FROM transactions 

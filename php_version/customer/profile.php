@@ -9,7 +9,7 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
-// Ensure $user is not false to avoid warnings
+
 if (!$user) {
     $user = [
         'full_name' => $_SESSION['full_name'] ?? 'User',
@@ -76,13 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Password too short (min 4 chars).'];
             redirect('profile.php');
         }
-        $hashed_password = $password; // Plain text as requested
+        $hashed_password = $password;
 
-        // Update users table with password
+
         $stmt = $pdo->prepare("UPDATE users SET email = ?, password_hash = ?, full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ?, nominee_name = ?, nominee_relationship = ? WHERE id = ?");
         $stmt->execute([$email, $hashed_password, $full_name, $phone, $address, $gender, $bio, $profile_picture, $nominee_name, $nominee_relationship, $user_id]);
     } else {
-        // Update users table without password
+
         $stmt = $pdo->prepare("UPDATE users SET email = ?, full_name = ?, phone = ?, address = ?, gender = ?, bio = ?, profile_picture = ?, nominee_name = ?, nominee_relationship = ? WHERE id = ?");
         $stmt->execute([$email, $full_name, $phone, $address, $gender, $bio, $profile_picture, $nominee_name, $nominee_relationship, $user_id]);
     }

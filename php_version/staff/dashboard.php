@@ -4,8 +4,10 @@ require_role('Staff');
 
 $today = date('Y-m-d');
 
-// Count Stats
+
+// Metric: Daily Deposits Count
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM transactions WHERE transaction_type = 'Deposit' AND DATE(created_at) = ? AND status = 'Success'");
+
 $stmt->execute([$today]);
 $count_deposits = $stmt->fetchColumn();
 
@@ -17,8 +19,10 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM transactions WHERE transaction_type 
 $stmt->execute([$today]);
 $count_transfers = $stmt->fetchColumn();
 
-// Recent Activity Stream
+
+// Live Feed: Recent 10 Transactions
 $stmt = $pdo->query("
+
     SELECT t.*, 
            fu.full_name as from_name,
            tu.full_name as to_name
@@ -31,9 +35,11 @@ $stmt = $pdo->query("
 ");
 $recent_transactions = $stmt->fetchAll();
 
-// Handle Account Lookup
+
 $balance_info = null;
+// Tool: Quick Account Balance Lookup
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['account_number'])) {
+
     $acc_num = $_POST['account_number'];
     $stmt = $pdo->prepare("
         SELECT a.balance, u.full_name

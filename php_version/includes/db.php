@@ -1,5 +1,5 @@
 <?php
-// Database connection configuration
+
 $host = 'localhost';
 $db = 'securebank';
 $user = 'root';
@@ -14,11 +14,15 @@ $options = [
 ];
 
 try {
+     // Initialize PDO Connection
      $pdo = new PDO($dsn, $user, $pass, $options);
 
-     // Ensure settings table exists
+
+
+     // Auto-Migration: Ensure settings table exists
      $pdo->exec("CREATE TABLE IF NOT EXISTS settings (setting_key VARCHAR(50) PRIMARY KEY, setting_value TEXT)");
-     // Seed defaults if empty
+
+
      $stmt = $pdo->query("SELECT COUNT(*) FROM settings");
      if ($stmt->fetchColumn() == 0) {
           $pdo->exec("INSERT INTO settings (setting_key, setting_value) VALUES 

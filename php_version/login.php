@@ -1,7 +1,9 @@
 <?php
 require_once 'includes/functions.php';
 
+// Redirection Check: If already logged in, route to appropriate dashboard
 if (is_logged_in()) {
+
     if ($_SESSION['role'] === 'Admin')
         redirect('admin/dashboard.php');
     if ($_SESSION['role'] === 'Staff')
@@ -9,7 +11,9 @@ if (is_logged_in()) {
     redirect('customer/dashboard.php');
 }
 
+// Brute Force Protection: Init Attempt Counter
 if (!isset($_SESSION['login_attempts'])) {
+
     $_SESSION['login_attempts'] = 0;
 }
 
@@ -40,7 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && $password === $user['password_hash']) {
-            $_SESSION['login_attempts'] = 0; // Reset on success
+            // Reset Security Flags
+            $_SESSION['login_attempts'] = 0;
+
             unset($_SESSION['captcha_answer']);
 
             $_SESSION['user_id'] = $user['id'];
@@ -62,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Generate new CAPTCHA if needed
+
 if ($_SESSION['login_attempts'] >= 3) {
     $num1 = rand(1, 10);
     $num2 = rand(1, 10);

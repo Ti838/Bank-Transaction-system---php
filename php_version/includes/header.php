@@ -75,7 +75,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Light Theme overrides */
+
         body.light-theme {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
             color: #1e293b;
@@ -110,13 +110,11 @@
 
         body.light-theme .text-indigo-200 {
             color: #4f46e5 !important;
-            /* Indigo-600 */
+
             opacity: 1 !important;
         }
 
-        body.light-theme .bg-gradient-to-br {
-            /* Adjust gradients if needed, or keep them as accent headers */
-        }
+        body.light-theme .bg-gradient-to-br {}
 
         @media print {
             body {

@@ -4,7 +4,7 @@ require_login();
 
 $transaction_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Determine dashboard URL based on role
+
 $in_subfolder = true;
 $prefix = '../';
 $dashboard_urls = [
@@ -26,7 +26,7 @@ if (!$transaction_id || $transaction_id <= 0) {
     exit;
 }
 
-// Fetch transaction with account details and user names from all detail tables
+
 $stmt = $pdo->prepare("
     SELECT t.*, 
            fa.account_number as from_account_number, 
@@ -55,11 +55,11 @@ if (!$transaction) {
     exit;
 }
 
-// Access Control Logic
+
 $is_admin_or_staff = in_array($_SESSION['role'] ?? '', ['Admin', 'Staff']);
 $is_owner = false;
 
-// If customer, check if they are the sender or receiver
+
 if ($_SESSION['role'] === 'Customer') {
     $stmt = $pdo->prepare("SELECT id FROM accounts WHERE user_id = ?");
     $stmt->execute([$_SESSION['user_id']]);
@@ -70,7 +70,7 @@ if ($_SESSION['role'] === 'Customer') {
     }
 }
 
-// Admins and Staff can see everything; Customers only see their own
+
 if (!$is_admin_or_staff && !$is_owner) {
     render('shared/error', [
         'page_title' => 'Unauthorized Access - Trust Mora Bank',

@@ -1,19 +1,19 @@
 <?php
 require_once '../includes/functions.php';
 
-// Allow both Admin and Staff to access this page
+
 require_login();
 if ($_SESSION['role'] !== 'Admin' && $_SESSION['role'] !== 'Staff') {
     redirect('../index.php');
 }
 
 if (!isset($_GET['id'])) {
-    redirect('users.php'); // or dashboard depending on role
+    redirect('users.php');
 }
 
 $user_id = intval($_GET['id']);
 
-// Handle Fund Injection/Withdrawal
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fund_action'])) {
     if ($_SESSION['role'] !== 'Admin') {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Unauthorized access.'];
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fund_action'])) {
     }
 }
 
-// Fetch user details
+
 $stmt = $pdo->prepare("
     SELECT u.*, r.name as role_name, a.account_number, a.balance, a.status as account_status, a.account_type
     FROM users u 
@@ -56,7 +56,7 @@ if (!$user) {
     redirect($_SESSION['role'] === 'Admin' ? 'users.php' : 'assist.php');
 }
 
-// Fetch recent transactions for this user
+
 $stmt = $pdo->prepare("
     SELECT * FROM transactions 
     WHERE from_account_id = (SELECT id FROM accounts WHERE user_id = ?) 

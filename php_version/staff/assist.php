@@ -11,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($amount <= 0) {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Invalid amount.'];
     } else {
+        // Lookup Target Account
         $stmt = $pdo->prepare("SELECT id FROM accounts WHERE account_number = ?");
+
         $stmt->execute([$account_number]);
         $acc_id = $stmt->fetchColumn();
 
@@ -19,9 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Account not found.'];
         } else {
             if ($transaction_type === 'Deposit') {
+                // Execute Credit Injection
                 $result = process_deposit($acc_id, $amount, $description);
             } elseif ($transaction_type === 'Withdrawal') {
+                // Execute Debit Extraction
                 $result = process_withdrawal($acc_id, $amount, $description);
+
             } else {
                 $result = ['success' => false, 'message' => 'Invalid transaction type.'];
             }

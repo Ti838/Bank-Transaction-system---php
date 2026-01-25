@@ -2,10 +2,10 @@
 require_once '../includes/functions.php';
 require_role('Admin');
 
-// Get today's date for filtering
+
 $today = date('Y-m-d');
 
-// Fetch all transactions with user names, excluding bank's own account
+
 $stmt = $pdo->prepare("
     SELECT t.*,
            fa.account_number as from_acc,
@@ -29,7 +29,7 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $transactions = $stmt->fetchAll();
 
-// Calculate stats
+
 $total_in = 0;
 $total_out = 0;
 $total_fees = 0;
@@ -44,7 +44,7 @@ foreach ($transactions as $t) {
     $total_fees += $t['fee'];
 }
 
-// Handle CSV Export
+
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="bank_report_' . date('Y-m-d') . '.csv"');

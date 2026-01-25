@@ -2,7 +2,7 @@
 require_once '../includes/functions.php';
 require_role('Admin');
 
-// Handle Staff Creation
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create') {
     $full_name = $_POST['full_name'] ?? '';
     $email = $_POST['email'] ?? '';
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Check if email exists
+
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute([$email]);
     if ($stmt->fetch()) {

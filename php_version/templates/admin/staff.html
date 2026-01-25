@@ -12,12 +12,12 @@
     </div>
 
     <?php if (isset($_SESSION['flash'])): ?>
-        <div
-            class="mb-8 p-4 bg-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500/20 border border-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500 text-white rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
-            <i class="fas fa-circle-notch fa-spin mr-2"></i>
-            <?php echo $_SESSION['flash']['message'];
+    <div
+        class="mb-8 p-4 bg-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500/20 border border-<?php echo $_SESSION['flash']['type'] === 'success' ? 'success' : 'red'; ?>-500 text-white rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
+        <i class="fas fa-circle-notch fa-spin mr-2"></i>
+        <?php echo $_SESSION['flash']['message'];
             unset($_SESSION['flash']); ?>
-        </div>
+    </div>
     <?php endif; ?>
 
     <div class="glass-light rounded-[2rem] border border-primary-500/10 overflow-hidden shadow-2xl">
@@ -34,55 +34,55 @@
                 </thead>
                 <tbody class="divide-y divide-primary-500/5">
                     <?php if ($staff_members): ?>
-                        <?php foreach ($staff_members as $s): ?>
-                            <tr class="hover:bg-primary-500/5 transition-colors group">
-                                <td class="py-6 px-8">
-                                    <div class="flex items-center space-x-4">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-black border border-primary-500/20 uppercase">
-                                            <?php echo substr($s['full_name'], 0, 1); ?>
-                                        </div>
-                                        <p class="text-sm font-black text-white uppercase">
-                                            <?php echo $s['full_name']; ?>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td class="py-6 px-8">
-                                    <p class="text-[10px] text-gray-400 font-bold">
-                                        <?php echo $s['email']; ?>
-                                    </p>
-                                </td>
-                                <td class="py-6 px-8 text-center">
-                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">
-                                        <?php echo $s['gender'] ?: 'UNKNOWN'; ?>
-                                    </span>
-                                </td>
-                                <td class="py-6 px-8 text-center text-[10px] text-gray-500 font-bold uppercase">
-                                    <?php echo date('d M Y', strtotime($s['created_at'])); ?>
-                                </td>
-                                <td class="py-6 px-8">
-                                    <div class="flex justify-center items-center space-x-3">
-                                        <a href="users.php?action=demote&id=<?php echo $s['id']; ?>"
-                                            class="px-3 py-1.5 bg-gold-400/10 text-gold-400 border border-gold-400/20 rounded-lg hover:bg-gold-400 hover:text-white transition-all text-[9px] font-black uppercase tracking-widest">
-                                            Demote
-                                        </a>
-                                        <a href="users.php?action=delete&id=<?php echo $s['id']; ?>"
-                                            onclick="return confirm('DECOMMISSION AGENT? This will sever all access.')"
-                                            class="px-3 py-1.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition-all text-[9px] font-black uppercase tracking-widest">
-                                            Decommission
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                    <?php foreach ($staff_members as $s): ?>
+                    <tr class="hover:bg-primary-500/5 transition-colors group">
+                        <td class="py-6 px-8">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-black border border-primary-500/20 uppercase">
+                                    <?php echo substr($s['full_name'], 0, 1); ?>
+                                </div>
+                                <p class="text-sm font-black text-white uppercase">
+                                    <?php echo $s['full_name']; ?>
+                                </p>
+                            </div>
+                        </td>
+                        <td class="py-6 px-8">
+                            <p class="text-[10px] text-gray-400 font-bold">
+                                <?php echo $s['email']; ?>
+                            </p>
+                        </td>
+                        <td class="py-6 px-8 text-center">
+                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">
+                                <?php echo $s['gender'] ?: 'UNKNOWN'; ?>
+                            </span>
+                        </td>
+                        <td class="py-6 px-8 text-center text-[10px] text-gray-500 font-bold uppercase">
+                            <?php echo date('d M Y', strtotime($s['created_at'])); ?>
+                        </td>
+                        <td class="py-6 px-8">
+                            <div class="flex justify-center items-center space-x-3">
+                                <a href="users.php?action=demote&id=<?php echo $s['id']; ?>"
+                                    class="px-3 py-1.5 bg-gold-400/10 text-gold-400 border border-gold-400/20 rounded-lg hover:bg-gold-400 hover:text-white transition-all text-[9px] font-black uppercase tracking-widest">
+                                    Demote
+                                </a>
+                                <a href="users.php?action=delete&id=<?php echo $s['id']; ?>"
+                                    onclick="return confirm('DECOMMISSION AGENT? This will sever all access.')"
+                                    class="px-3 py-1.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition-all text-[9px] font-black uppercase tracking-widest">
+                                    Decommission
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="py-20 text-center">
-                                <i class="fas fa-user-slash text-4xl text-gray-800 mb-4 block"></i>
-                                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Agents
-                                    Deployed in HQ</p>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" class="py-20 text-center">
+                            <i class="fas fa-user-slash text-4xl text-gray-800 mb-4 block"></i>
+                            <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">No Agents
+                                Deployed in HQ</p>
+                        </td>
+                    </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -90,7 +90,7 @@
     </div>
 </section>
 
-<!-- Deployment Modal -->
+
 <div id="createStaffModal"
     class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center z-50 px-4">
     <div class="glass-light p-10 rounded-[3rem] border border-primary-500/20 max-w-md w-full relative shadow-2xl">

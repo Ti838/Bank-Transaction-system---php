@@ -10,9 +10,11 @@ $account = $stmt->fetch();
 $transactions = [];
 if ($account) {
     $stmt = $pdo->prepare("
+        // Fetch All Ingress (To) and Egress (From) Transactions
         SELECT * FROM transactions 
         WHERE from_account_id = ? OR to_account_id = ? 
         ORDER BY created_at DESC
+
     ");
     $stmt->execute([$account['id'], $account['id']]);
     $transactions = $stmt->fetchAll();

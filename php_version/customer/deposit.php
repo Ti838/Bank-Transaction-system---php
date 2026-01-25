@@ -14,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($amount <= 0) {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Invalid amount.'];
     } else {
+        // Execute Atomic Deposit Transaction
         $result = process_deposit($account['id'], $amount, $description);
+
         $_SESSION['flash'] = ['type' => $result['success'] ? 'success' : 'danger', 'message' => $result['message']];
         if ($result['success']) {
             redirect('receipt.php?id=' . $result['transaction_id']);

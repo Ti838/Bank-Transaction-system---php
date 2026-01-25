@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'] ?? '';
     $bio = $_POST['bio'] ?? '';
 
-    // Simplified usertype mapping to roles
+
     $role_name = $usertype;
 
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
@@ -40,10 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $role = $stmt->fetch();
         }
 
-        $hashed_password = $password; // Plain text as requested
+        $hashed_password = $password;
 
-        // Handle KYC Upload
+
+        // KYC Upload Handling
         $kyc_document = null;
+
         if (isset($_FILES['kyc_document']) && $_FILES['kyc_document']['error'] === UPLOAD_ERR_OK) {
             $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
             $ext = strtolower(pathinfo($_FILES['kyc_document']['name'], PATHINFO_EXTENSION));
@@ -58,18 +60,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Insert all data into users table
+
+        // Transaction Block: Create User then Account (Ideally wrapped in toggle transaction)
         $stmt = $pdo->prepare("INSERT INTO users (role_id, email, password_hash, full_name, phone, address, bio, gender, kyc_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
         $stmt->execute([$role['id'], $email, $hashed_password, $full_name, $phone, $address, $bio, $gender, $kyc_document]);
         $user_id = $pdo->lastInsertId();
 
-        // Create Default Account for all users
+
         if ($role_name === 'Customer' || $role_name === 'Admin' || $role_name === 'Staff') {
             $account_number = generate_account_number();
+            // Customers start as Pending, Staff/Admin as Active
             $status = ($role_name === 'Customer') ? 'Pending' : 'Active';
 
-            // For non-customers (staff/admin), force Savings to keep it simple, or allow choice. 
-            // Let's allow choice as per UI.
+
+
 
             $stmt = $pdo->prepare("INSERT INTO accounts (account_number, user_id, account_type, balance, status) VALUES (?, ?, ?, 0.00, ?)");
             $stmt->execute([$account_number, $user_id, $account_type, $status]);

@@ -11,7 +11,7 @@
 
 <body class="flex items-center justify-center min-h-screen">
     <div class="max-w-2xl mx-auto px-6 py-12 text-center">
-        <!-- Error Icon -->
+
         <div class="mb-8">
             <div
                 class="w-24 h-24 mx-auto bg-red-500/10 rounded-full flex items-center justify-center border-4 border-red-500/20">
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <!-- Error Message -->
+
         <h1 class="text-4xl font-black gradient-text mb-4 uppercase tracking-tighter">
             <?php echo $error_title ?? 'System Error'; ?>
         </h1>
@@ -28,7 +28,7 @@
             <?php echo $error_message ?? 'An unexpected error occurred.'; ?>
         </p>
 
-        <!-- Action Buttons -->
+
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="<?php echo $back_url ?? 'javascript:history.back()'; ?>"
                 class="px-8 py-4 bg-primary-600 text-white rounded-xl font-black text-sm uppercase tracking-widest hover:bg-primary-700 transition-all">
@@ -43,7 +43,7 @@
             <?php endif; ?>
         </div>
 
-        <!-- Additional Info -->
+
         <?php if (isset($error_details)): ?>
         <div class="mt-12 p-6 glass-light rounded-2xl border border-red-500/10 text-left">
             <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Technical Details</p>
