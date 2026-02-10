@@ -69,7 +69,6 @@ if (isset($_GET['role'])) {
 }
 
 $stmt = $pdo->prepare("
-    // Fetch Users with Role and Account Balance
     SELECT u.*, u.kyc_document, r.name as role_name, a.status as account_status, a.account_number, a.balance
     FROM users u 
     JOIN roles r ON u.role_id = r.id 

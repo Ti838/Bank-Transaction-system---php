@@ -28,8 +28,8 @@
 
                 <!-- Widget: Currency Converter (BDT <-> USD) -->
                 <button id="currency-toggle" aria-label="Toggle Currency"
-                    class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-success-400 font-bold text-sm h-10 w-10 flex items-center justify-center border border-transparent hover:border-white/10">
-                    ৳
+                    class="p-2 rounded-full hover:bg-white/10 transition-all text-gray-400 hover:text-success-400 font-bold text-sm h-10 w-10 flex items-center justify-center border border-transparent hover:border-white/10 shadow-lg">
+                    <span id="currency-icon">৳</span>
                 </button>
 
                 <div class="relative group" id="notification-wrapper">
@@ -218,96 +218,71 @@
 
     // System: Live Currency Conversion
     const currencyToggle = document.getElementById('currency-toggle');
+    const currencyIcon = document.getElementById('currency-icon');
     const exchangeRate = 0.0090; // Fixed Rate 1 BDT = 0.0090 USD
 
-
-    if (currencyToggle) {
-
+    if (currencyToggle && currencyIcon) {
         let currentCurrency = localStorage.getItem('currency') || 'BDT';
 
-        function updateCurrencyDisplay() {
-            currencyToggle.innerText = currentCurrency === 'BDT' ? '৳' : '$';
+        function updateCurrencyDisplay(isInitial = false) {
+            // Smooth transition for the icon
+            currencyIcon.style.opacity = '0';
 
+            setTimeout(() => {
+                currencyIcon.innerHTML = currentCurrency === 'BDT' ? '৳' : '<i class="fas fa-dollar-sign"></i>';
+                currencyIcon.style.opacity = '1';
 
-
-            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-            let node;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            if (currentCurrency === 'USD') {
-                convertAllToUSD();
-                currencyToggle.classList.add('text-green-400');
-                currencyToggle.classList.remove('text-success-400');
-            } else {
-
-
-                location.reload();
-            }
+                if (currentCurrency === 'USD') {
+                    convertAllToUSD();
+                    currencyToggle.classList.add('text-green-400');
+                    currencyToggle.classList.remove('text-gray-400');
+                } else {
+                    if (!isInitial) {
+                        location.reload();
+                    } else {
+                        currencyToggle.classList.remove('text-green-400');
+                        currencyToggle.classList.add('text-gray-400');
+                    }
+                }
+            }, 50);
         }
 
-        // Helper: Convert all '৳' prices to USD in DOM
         function convertAllToUSD() {
-
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
             let node;
             while (node = walker.nextNode()) {
-                const text = node.nodeValue.trim();
-
+                const text = node.nodeValue;
                 if (text.includes('৳')) {
-                    // Remove symbol and commas
-                    const val = parseFloat(numericPart);
-                    if (!isNaN(val)) {
-
-                        if (!node.parentNode.dataset.originalBdt) {
-                            node.parentNode.dataset.originalBdt = val;
+                    const match = text.match(/৳\s*([\d,]+\.?\d*)/);
+                    if (match) {
+                        const originalValue = match[0];
+                        const numericPart = match[1].replace(/,/g, '');
+                        const val = parseFloat(numericPart);
+                        if (!isNaN(val)) {
+                            const usdVal = (val * exchangeRate).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                            node.nodeValue = text.replace(originalValue, '$ ' + usdVal);
                         }
-
-
-                        const usdVal = (val * exchangeRate).toFixed(2);
-                        node.nodeValue = text.replace(/৳\s*[\d,]+\.?\d*/, '$ ' + usdVal);
                     }
                 }
             }
         }
 
-
+        // Initialize state
         if (currentCurrency === 'USD') {
-
-
-            setTimeout(updateCurrencyDisplay, 100);
-        } else {
-            currencyToggle.innerText = '৳';
+            // Use a very short delay to ensure DOM is ready but minimize flash
+            setTimeout(() => updateCurrencyDisplay(true), 10);
         }
 
         currencyToggle.addEventListener('click', () => {
-            if (currentCurrency === 'BDT') {
-                currentCurrency = 'USD';
-                localStorage.setItem('currency', 'USD');
-                updateCurrencyDisplay();
-            } else {
-                currentCurrency = 'BDT';
-                localStorage.setItem('currency', 'BDT');
-                location.reload();
-            }
+            currentCurrency = currentCurrency === 'BDT' ? 'USD' : 'BDT';
+            localStorage.setItem('currency', currentCurrency);
+            updateCurrencyDisplay();
         });
+
+        // Add CSS for smooth icon transition
+        currencyIcon.style.transition = 'opacity 0.1s ease-in-out';
     }
 </script>

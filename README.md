@@ -37,7 +37,7 @@ A premium, full-featured online banking management system with a modern glassmor
 
 ### 1. Prerequisites
 
-- XAMPP/WAMPP (PHP 7.4+ & MySQL)
+- XAMPP/WAMP (PHP 7.4+ & MySQL)
 - Modern Web Browser
 
 ### 2. Database Setup
@@ -69,7 +69,7 @@ PROJECT/
 
 ## Database Partitioning
 
-The system utilizing a simplified, high-performance data model:
+The system utilizes a simplified, high-performance data model:
 
 1. **users** - Unified entity containing Authentication & Profile Data (Full Name, Address, Bio, etc.).
 2. **roles** - Role definitions (Admin, Staff, Customer).
